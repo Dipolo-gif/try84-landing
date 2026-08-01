@@ -467,6 +467,38 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
 .hero__actions .btn{flex:1 1 auto;min-width:190px}
 @media (min-width:768px){.hero__actions .btn{flex:0 0 auto}}
 
+/* Bola de rugby: o invólucro flutua, o SVG dentro dele tomba devagar.
+   Separado em dois elementos porque as duas animações escrevem transform. */
+.hero__bola{
+  position:absolute;z-index:3;pointer-events:none;
+  width:clamp(76px,10vw,132px);
+  right:7%;top:13%;
+  animation:bolaFlutua 7s ease-in-out infinite;
+  filter:drop-shadow(0 10px 22px rgba(16,16,16,.4));
+}
+@media (min-width:1024px){.hero__bola{right:9%;top:20%}}
+.hero__bola svg{display:block;width:100%;height:auto;animation:bolaTomba 18s linear infinite}
+@keyframes bolaFlutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes bolaTomba{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* Seguidor do ponteiro. O cursor nativo continua visível de propósito:
+   escondê-lo prejudica seleção de texto e a leitura de campos de formulário.
+   Só existe em ponteiro fino com hover, ou seja, nunca em toque. */
+.ponteiro{display:none}
+@media (hover:hover) and (pointer:fine){
+  .ponteiro{
+    display:block;position:fixed;left:0;top:0;z-index:200;
+    width:30px;pointer-events:none;
+    opacity:0;transition:opacity var(--t) var(--ease),width var(--t) var(--ease);
+    will-change:transform;
+  }
+  .ponteiro.is-ativo{opacity:.92}
+  .ponteiro.is-alvo{width:42px}       /* cresce sobre elementos clicáveis */
+  .ponteiro.is-oculto{opacity:0}       /* some sobre campos de texto */
+  .ponteiro svg{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 4px rgba(16,16,16,.45))}
+}
+@media (prefers-reduced-motion:reduce){.ponteiro{display:none!important}}
+
 /* Revelação do hero */
 .js .reveal{opacity:0;transform:translateY(16px);transition:opacity 320ms var(--ease),transform 320ms var(--ease)}
 .js .reveal.is-in{opacity:1;transform:none}
@@ -1095,6 +1127,24 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
     <span class="hero__glow" aria-hidden="true"></span>
     <span class="hero__ghost" data-parallax="0.13" data-parallax-base="translate(-50%,-50%)" aria-hidden="true">TRY84</span>
 
+    <span class="hero__bola" aria-hidden="true">
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="couroHero" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#C89A57"/>
+            <stop offset=".55" stop-color="#B08D4F"/>
+            <stop offset="1" stop-color="#6F5529"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx="60" cy="40" rx="57" ry="35" fill="url(#couroHero)"/>
+        <ellipse cx="60" cy="40" rx="57" ry="35" fill="none" stroke="#101010" stroke-opacity=".32" stroke-width="2"/>
+        <path d="M24 23c11 10 11 24 0 34" stroke="#ECE5D5" stroke-opacity=".45" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M96 23c-11 10-11 24 0 34" stroke="#ECE5D5" stroke-opacity=".45" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M16 40h88" stroke="#ECE5D5" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M44 31v18M55 28v24M66 28v24M77 31v18" stroke="#ECE5D5" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+
     <div class="container hero__grid">
       <div class="hero__text">
         <span class="hero__rule reveal" aria-hidden="true"></span>
@@ -1710,6 +1760,15 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
   </div>
 </footer>
 
+<!-- Seguidor do ponteiro, puramente decorativo -->
+<div class="ponteiro" id="ponteiro" aria-hidden="true">
+  <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="60" cy="40" rx="55" ry="33" fill="#B08D4F" stroke="#ECE5D5" stroke-width="6"/>
+    <path d="M24 40h72" stroke="#ECE5D5" stroke-width="7" stroke-linecap="round"/>
+    <path d="M48 30v20M60 27v26M72 30v20" stroke="#ECE5D5" stroke-width="7" stroke-linecap="round"/>
+  </svg>
+</div>
+
 <!-- Sacola lateral -->
 <div class="drawer__scrim" id="cartScrim" hidden></div>
 
@@ -1931,6 +1990,47 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
       requestAnimationFrame(function () { posicionar(); agendado = false; });
     }, { passive: true });
     posicionar();
+  }
+
+  /* ---------- Seguidor do ponteiro ----------
+     Só em ponteiro fino com hover (nunca em toque) e nunca sob movimento
+     reduzido. O rAF para sozinho quando a bola alcança o cursor. */
+  var ponteiro = document.getElementById('ponteiro');
+  if (ponteiro && !reduced && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    var pAlvoX = 0, pAlvoY = 0, pX = 0, pY = 0, pAtivo = false, pLoop = null;
+    var CLICAVEL = 'a[href],button,summary,label,[role="tab"]';
+    var CAMPO = 'input,select,textarea';
+
+    function pAnda() {
+      var dx = pAlvoX - pX, dy = pAlvoY - pY;
+      pX += dx * 0.18;
+      pY += dy * 0.18;
+      var inclina = Math.max(-22, Math.min(22, dx * 0.7));
+      // translate(-50%,-50%) centraliza sem precisar ler o tamanho a cada quadro
+      ponteiro.style.transform =
+        'translate3d(' + pX.toFixed(1) + 'px,' + pY.toFixed(1) + 'px,0)' +
+        ' translate(-50%,-50%) rotate(' + inclina.toFixed(1) + 'deg)';
+      if (Math.abs(dx) < 0.2 && Math.abs(dy) < 0.2) { pLoop = null; return; }
+      pLoop = requestAnimationFrame(pAnda);
+    }
+
+    window.addEventListener('pointermove', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      pAlvoX = e.clientX; pAlvoY = e.clientY;
+      if (!pAtivo) { pAtivo = true; pX = pAlvoX; pY = pAlvoY; ponteiro.classList.add('is-ativo'); }
+      var t = e.target;
+      if (t && t.closest) {
+        ponteiro.classList.toggle('is-alvo', !!t.closest(CLICAVEL));
+        ponteiro.classList.toggle('is-oculto', !!t.closest(CAMPO));
+      }
+      if (!pLoop) { pLoop = requestAnimationFrame(pAnda); }
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', function () { ponteiro.classList.remove('is-ativo'); });
+    document.addEventListener('mouseenter', function () { if (pAtivo) { ponteiro.classList.add('is-ativo'); } });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden && pLoop) { cancelAnimationFrame(pLoop); pLoop = null; }
+    });
   }
 
   /* ---------- Barra de avisos rotativa ---------- */
