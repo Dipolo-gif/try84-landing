@@ -8,7 +8,9 @@ Abra o `index.html` no navegador ou acesse a versão publicada.
 ## O que tem dentro
 
 - Hero em tela cheia com parallax em duas camadas (fundo a 0,26× e tipografia a 0,13× do scroll)
-- Vitrine de produtos com badges, preço em mono, troca de foto no hover e lightbox
+- Vitrine de produtos com badges, preço em mono, seleção de tamanho e lightbox
+- Tamanho é escolha obrigatória: sem ele o produto não entra na sacola, e cada
+  tamanho vira uma linha própria
 - Sacola lateral com estado real: quantidade, remoção, progresso de frete grátis e totais
 - Tela de pagamento dedicada com Cartão, Pix e Boleto, resumo do pedido sempre visível
 - Abas de Pagamento / Entrega / Trocas no padrão ARIA, navegáveis por setas

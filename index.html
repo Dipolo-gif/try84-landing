@@ -605,11 +605,22 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
 .chips{display:flex;flex-wrap:wrap;gap:var(--s1);margin-top:var(--s1)}
 .chip{
   display:inline-flex;align-items:center;justify-content:center;
-  min-width:30px;height:30px;padding:0 5px;
+  min-width:44px;height:44px;padding:0 6px;
   border:1px solid var(--line);border-radius:4px;background:var(--white);
-  font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--ink-900);
+  font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--ink-900);
+  cursor:pointer;transition:background var(--t) var(--ease),border-color var(--t) var(--ease),color var(--t) var(--ease);
 }
-@media (min-width:768px){.chip{min-width:36px;height:36px;font-size:12px}}
+/* Seleção de tamanho ------------------------------------------------- */
+/* Acima da camada de link que cobre o card inteiro, como o botão */
+.sizes{position:relative;z-index:3;border:0;padding:0;margin:var(--s3) 0 0;min-inline-size:0}
+.sizes__label{font-size:13px;color:var(--muted);padding:0}
+.sizes__chips{display:flex;flex-wrap:wrap;gap:var(--s1);margin-top:var(--s1)}
+.sizes__radio{position:absolute;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
+.chip:hover{border-color:var(--green-900)}
+.sizes__radio:checked+.chip{background:var(--green-900);border-color:var(--green-900);color:var(--cream-100)}
+.sizes__radio:focus-visible+.chip{outline:2px solid var(--focus);outline-offset:2px}
+.sizes__erro{margin-top:var(--s2);font-size:13px;font-weight:500;color:var(--red-600)}
+@media (prefers-reduced-motion:reduce){.chip{transition:none}}
 .chip--out{position:relative;color:var(--muted);overflow:hidden}
 .chip--out::after{
   content:"";position:absolute;left:-20%;right:-20%;top:50%;height:1px;
@@ -1328,12 +1339,22 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
             <h3 class="h4 card__name"><a href="#produtos">Camiseta Torcedor Brasil Tupis 2025</a></h3>
             <p class="card__prices"><span class="price card__now">R$ 289,00</span></p>
             <p class="card__inst" data-parcela></p>
-            <p class="card__sizes-label">Tamanhos: PP ao G3</p>
-            <ul class="chips" aria-hidden="true">
-              <li class="chip">PP</li><li class="chip">P</li><li class="chip">M</li><li class="chip">G</li><li class="chip">GG</li><li class="chip">G1</li><li class="chip">G2</li><li class="chip">G3</li>
-            </ul>
+            <fieldset class="sizes" data-sizes>
+              <legend class="sizes__label">Tamanho</legend>
+              <div class="sizes__chips">
+                <input class="sizes__radio" type="radio" name="tam-brasil" id="tam-brasil-pp" value="PP"><label class="chip" for="tam-brasil-pp">PP</label>
+                <input class="sizes__radio" type="radio" name="tam-brasil" id="tam-brasil-p" value="P"><label class="chip" for="tam-brasil-p">P</label>
+                <input class="sizes__radio" type="radio" name="tam-brasil" id="tam-brasil-m" value="M"><label class="chip" for="tam-brasil-m">M</label>
+                <input class="sizes__radio" type="radio" name="tam-brasil" id="tam-brasil-g" value="G"><label class="chip" for="tam-brasil-g">G</label>
+                <input class="sizes__radio" type="radio" name="tam-brasil" id="tam-brasil-gg" value="GG"><label class="chip" for="tam-brasil-gg">GG</label>
+                <input class="sizes__radio" type="radio" name="tam-brasil" id="tam-brasil-g1" value="G1"><label class="chip" for="tam-brasil-g1">G1</label>
+                <input class="sizes__radio" type="radio" name="tam-brasil" id="tam-brasil-g2" value="G2"><label class="chip" for="tam-brasil-g2">G2</label>
+                <input class="sizes__radio" type="radio" name="tam-brasil" id="tam-brasil-g3" value="G3"><label class="chip" for="tam-brasil-g3">G3</label>
+              </div>
+            </fieldset>
+            <p class="sizes__erro" data-erro-tam role="alert" hidden>Escolha um tamanho antes de adicionar.</p>
             <button class="btn btn--secondary card__add" type="button" data-add
-                    data-nome="Camiseta Torcedor Brasil Tupis 2025" data-preco="28900" data-tamanho="M"
+                    data-nome="Camiseta Torcedor Brasil Tupis 2025" data-preco="28900"
                     data-foto="assets/produto-brasil.svg">Adicionar à sacola</button>
           </div>
         </li>
@@ -1353,12 +1374,22 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
             <p class="card__prices"><span class="card__was">R$ 429,00</span>
               <span class="price card__now card__now--off">R$ 349,90</span></p>
             <p class="card__inst" data-parcela></p>
-            <p class="card__sizes-label">Tamanhos: PP ao G3</p>
-            <ul class="chips" aria-hidden="true">
-              <li class="chip">PP</li><li class="chip">P</li><li class="chip">M</li><li class="chip">G</li><li class="chip">GG</li><li class="chip">G1</li><li class="chip">G2</li><li class="chip">G3</li>
-            </ul>
+            <fieldset class="sizes" data-sizes>
+              <legend class="sizes__label">Tamanho</legend>
+              <div class="sizes__chips">
+                <input class="sizes__radio" type="radio" name="tam-argentina" id="tam-argentina-pp" value="PP"><label class="chip" for="tam-argentina-pp">PP</label>
+                <input class="sizes__radio" type="radio" name="tam-argentina" id="tam-argentina-p" value="P"><label class="chip" for="tam-argentina-p">P</label>
+                <input class="sizes__radio" type="radio" name="tam-argentina" id="tam-argentina-m" value="M"><label class="chip" for="tam-argentina-m">M</label>
+                <input class="sizes__radio" type="radio" name="tam-argentina" id="tam-argentina-g" value="G"><label class="chip" for="tam-argentina-g">G</label>
+                <input class="sizes__radio" type="radio" name="tam-argentina" id="tam-argentina-gg" value="GG"><label class="chip" for="tam-argentina-gg">GG</label>
+                <input class="sizes__radio" type="radio" name="tam-argentina" id="tam-argentina-g1" value="G1"><label class="chip" for="tam-argentina-g1">G1</label>
+                <input class="sizes__radio" type="radio" name="tam-argentina" id="tam-argentina-g2" value="G2"><label class="chip" for="tam-argentina-g2">G2</label>
+                <input class="sizes__radio" type="radio" name="tam-argentina" id="tam-argentina-g3" value="G3"><label class="chip" for="tam-argentina-g3">G3</label>
+              </div>
+            </fieldset>
+            <p class="sizes__erro" data-erro-tam role="alert" hidden>Escolha um tamanho antes de adicionar.</p>
             <button class="btn btn--secondary card__add" type="button" data-add
-                    data-nome="Camiseta Jogo Argentina Los Pumas 2024" data-preco="34990" data-tamanho="G"
+                    data-nome="Camiseta Jogo Argentina Los Pumas 2024" data-preco="34990"
                     data-foto="assets/produto-argentina.svg">Adicionar à sacola</button>
           </div>
         </li>
@@ -1376,12 +1407,22 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
             <h3 class="h4 card__name"><a href="#produtos">Camiseta Torcedor Fiji 2025</a></h3>
             <p class="card__prices"><span class="price card__now">R$ 275,00</span></p>
             <p class="card__inst" data-parcela></p>
-            <p class="card__sizes-label">Tamanhos: PP ao G3</p>
-            <ul class="chips" aria-hidden="true">
-              <li class="chip">PP</li><li class="chip">P</li><li class="chip">M</li><li class="chip">G</li><li class="chip">GG</li><li class="chip">G1</li><li class="chip">G2</li><li class="chip">G3</li>
-            </ul>
+            <fieldset class="sizes" data-sizes>
+              <legend class="sizes__label">Tamanho</legend>
+              <div class="sizes__chips">
+                <input class="sizes__radio" type="radio" name="tam-fiji" id="tam-fiji-pp" value="PP"><label class="chip" for="tam-fiji-pp">PP</label>
+                <input class="sizes__radio" type="radio" name="tam-fiji" id="tam-fiji-p" value="P"><label class="chip" for="tam-fiji-p">P</label>
+                <input class="sizes__radio" type="radio" name="tam-fiji" id="tam-fiji-m" value="M"><label class="chip" for="tam-fiji-m">M</label>
+                <input class="sizes__radio" type="radio" name="tam-fiji" id="tam-fiji-g" value="G"><label class="chip" for="tam-fiji-g">G</label>
+                <input class="sizes__radio" type="radio" name="tam-fiji" id="tam-fiji-gg" value="GG"><label class="chip" for="tam-fiji-gg">GG</label>
+                <input class="sizes__radio" type="radio" name="tam-fiji" id="tam-fiji-g1" value="G1"><label class="chip" for="tam-fiji-g1">G1</label>
+                <input class="sizes__radio" type="radio" name="tam-fiji" id="tam-fiji-g2" value="G2"><label class="chip" for="tam-fiji-g2">G2</label>
+                <input class="sizes__radio" type="radio" name="tam-fiji" id="tam-fiji-g3" value="G3"><label class="chip" for="tam-fiji-g3">G3</label>
+              </div>
+            </fieldset>
+            <p class="sizes__erro" data-erro-tam role="alert" hidden>Escolha um tamanho antes de adicionar.</p>
             <button class="btn btn--secondary card__add" type="button" data-add
-                    data-nome="Camiseta Torcedor Fiji 2025" data-preco="27500" data-tamanho="M"
+                    data-nome="Camiseta Torcedor Fiji 2025" data-preco="27500"
                     data-foto="assets/produto-fiji.svg">Adicionar à sacola</button>
           </div>
         </li>
@@ -1399,12 +1440,22 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
             <h3 class="h4 card__name"><a href="#produtos">Camiseta Jogo São José Rugby 2024</a></h3>
             <p class="card__prices"><span class="price card__now">R$ 319,50</span></p>
             <p class="card__inst" data-parcela></p>
-            <p class="card__sizes-label">Tamanhos: PP ao G3</p>
-            <ul class="chips" aria-hidden="true">
-              <li class="chip">PP</li><li class="chip">P</li><li class="chip">M</li><li class="chip">G</li><li class="chip">GG</li><li class="chip">G1</li><li class="chip">G2</li><li class="chip">G3</li>
-            </ul>
+            <fieldset class="sizes" data-sizes>
+              <legend class="sizes__label">Tamanho</legend>
+              <div class="sizes__chips">
+                <input class="sizes__radio" type="radio" name="tam-sao-jose" id="tam-sao-jose-pp" value="PP"><label class="chip" for="tam-sao-jose-pp">PP</label>
+                <input class="sizes__radio" type="radio" name="tam-sao-jose" id="tam-sao-jose-p" value="P"><label class="chip" for="tam-sao-jose-p">P</label>
+                <input class="sizes__radio" type="radio" name="tam-sao-jose" id="tam-sao-jose-m" value="M"><label class="chip" for="tam-sao-jose-m">M</label>
+                <input class="sizes__radio" type="radio" name="tam-sao-jose" id="tam-sao-jose-g" value="G"><label class="chip" for="tam-sao-jose-g">G</label>
+                <input class="sizes__radio" type="radio" name="tam-sao-jose" id="tam-sao-jose-gg" value="GG"><label class="chip" for="tam-sao-jose-gg">GG</label>
+                <input class="sizes__radio" type="radio" name="tam-sao-jose" id="tam-sao-jose-g1" value="G1"><label class="chip" for="tam-sao-jose-g1">G1</label>
+                <input class="sizes__radio" type="radio" name="tam-sao-jose" id="tam-sao-jose-g2" value="G2"><label class="chip" for="tam-sao-jose-g2">G2</label>
+                <input class="sizes__radio" type="radio" name="tam-sao-jose" id="tam-sao-jose-g3" value="G3"><label class="chip" for="tam-sao-jose-g3">G3</label>
+              </div>
+            </fieldset>
+            <p class="sizes__erro" data-erro-tam role="alert" hidden>Escolha um tamanho antes de adicionar.</p>
             <button class="btn btn--secondary card__add" type="button" data-add
-                    data-nome="Camiseta Jogo São José Rugby 2024" data-preco="31950" data-tamanho="G"
+                    data-nome="Camiseta Jogo São José Rugby 2024" data-preco="31950"
                     data-foto="assets/produto-sao-jose.svg">Adicionar à sacola</button>
           </div>
         </li>
@@ -1422,12 +1473,22 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
             <h3 class="h4 card__name"><a href="#produtos">Camiseta Torcedor Leinster 2024</a></h3>
             <p class="card__prices"><span class="price card__now">R$ 298,00</span></p>
             <p class="card__inst" data-parcela></p>
-            <p class="card__sizes-label">Tamanhos: PP ao G3</p>
-            <ul class="chips" aria-hidden="true">
-              <li class="chip">PP</li><li class="chip">P</li><li class="chip">M</li><li class="chip">G</li><li class="chip">GG</li><li class="chip">G1</li><li class="chip">G2</li><li class="chip">G3</li>
-            </ul>
+            <fieldset class="sizes" data-sizes>
+              <legend class="sizes__label">Tamanho</legend>
+              <div class="sizes__chips">
+                <input class="sizes__radio" type="radio" name="tam-leinster" id="tam-leinster-pp" value="PP"><label class="chip" for="tam-leinster-pp">PP</label>
+                <input class="sizes__radio" type="radio" name="tam-leinster" id="tam-leinster-p" value="P"><label class="chip" for="tam-leinster-p">P</label>
+                <input class="sizes__radio" type="radio" name="tam-leinster" id="tam-leinster-m" value="M"><label class="chip" for="tam-leinster-m">M</label>
+                <input class="sizes__radio" type="radio" name="tam-leinster" id="tam-leinster-g" value="G"><label class="chip" for="tam-leinster-g">G</label>
+                <input class="sizes__radio" type="radio" name="tam-leinster" id="tam-leinster-gg" value="GG"><label class="chip" for="tam-leinster-gg">GG</label>
+                <input class="sizes__radio" type="radio" name="tam-leinster" id="tam-leinster-g1" value="G1"><label class="chip" for="tam-leinster-g1">G1</label>
+                <input class="sizes__radio" type="radio" name="tam-leinster" id="tam-leinster-g2" value="G2"><label class="chip" for="tam-leinster-g2">G2</label>
+                <input class="sizes__radio" type="radio" name="tam-leinster" id="tam-leinster-g3" value="G3"><label class="chip" for="tam-leinster-g3">G3</label>
+              </div>
+            </fieldset>
+            <p class="sizes__erro" data-erro-tam role="alert" hidden>Escolha um tamanho antes de adicionar.</p>
             <button class="btn btn--secondary card__add" type="button" data-add
-                    data-nome="Camiseta Torcedor Leinster 2024" data-preco="29800" data-tamanho="GG"
+                    data-nome="Camiseta Torcedor Leinster 2024" data-preco="29800"
                     data-foto="assets/produto-leinster.svg">Adicionar à sacola</button>
           </div>
         </li>
@@ -1446,33 +1507,22 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
             <h3 class="h4 card__name"><a href="#produtos">Camiseta Jogo Crusaders 2023</a></h3>
             <p class="card__prices"><span class="price card__now">R$ 365,00</span></p>
             <p class="card__inst" data-parcela></p>
-            <p class="card__sizes-label">Tamanhos: PP ao G3</p>
-            <ul class="chips" aria-hidden="true">
-              <li class="chip chip--out">PP</li><li class="chip chip--out">P</li><li class="chip chip--out">M</li><li class="chip chip--out">G</li><li class="chip chip--out">GG</li><li class="chip chip--out">G1</li><li class="chip chip--out">G2</li><li class="chip chip--out">G3</li>
-            </ul>
-            <button class="btn btn--secondary card__add" type="button" disabled>Esgotado</button>
-          </div>
-        </li>
-
-        <li class="card" data-cat="retro" data-preco="25990">
-          <div class="card__media">
-            <img src="assets/produto-gales-1987.svg" width="400" height="500"
-                 loading="lazy" decoding="async" alt="Camisa de rugby creme com listras verdes">
-            <button class="zoom" type="button" aria-label="Ampliar foto de Retrô Gales 1987"
-                    data-full="assets/produto-gales-1987.svg" data-caption="Retrô Gales 1987">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/></svg>
-            </button>
-          </div>
-          <div class="card__body">
-            <h3 class="h4 card__name"><a href="#produtos">Retrô Gales 1987</a></h3>
-            <p class="card__prices"><span class="price card__now">R$ 259,90</span></p>
-            <p class="card__inst" data-parcela></p>
-            <p class="card__sizes-label">Tamanhos: PP ao G3</p>
-            <ul class="chips" aria-hidden="true">
-              <li class="chip">PP</li><li class="chip">P</li><li class="chip">M</li><li class="chip">G</li><li class="chip">GG</li><li class="chip">G1</li><li class="chip">G2</li><li class="chip">G3</li>
-            </ul>
+            <fieldset class="sizes" data-sizes>
+              <legend class="sizes__label">Tamanho</legend>
+              <div class="sizes__chips">
+                <input class="sizes__radio" type="radio" name="tam-gales-1987" id="tam-gales-1987-pp" value="PP"><label class="chip" for="tam-gales-1987-pp">PP</label>
+                <input class="sizes__radio" type="radio" name="tam-gales-1987" id="tam-gales-1987-p" value="P"><label class="chip" for="tam-gales-1987-p">P</label>
+                <input class="sizes__radio" type="radio" name="tam-gales-1987" id="tam-gales-1987-m" value="M"><label class="chip" for="tam-gales-1987-m">M</label>
+                <input class="sizes__radio" type="radio" name="tam-gales-1987" id="tam-gales-1987-g" value="G"><label class="chip" for="tam-gales-1987-g">G</label>
+                <input class="sizes__radio" type="radio" name="tam-gales-1987" id="tam-gales-1987-gg" value="GG"><label class="chip" for="tam-gales-1987-gg">GG</label>
+                <input class="sizes__radio" type="radio" name="tam-gales-1987" id="tam-gales-1987-g1" value="G1"><label class="chip" for="tam-gales-1987-g1">G1</label>
+                <input class="sizes__radio" type="radio" name="tam-gales-1987" id="tam-gales-1987-g2" value="G2"><label class="chip" for="tam-gales-1987-g2">G2</label>
+                <input class="sizes__radio" type="radio" name="tam-gales-1987" id="tam-gales-1987-g3" value="G3"><label class="chip" for="tam-gales-1987-g3">G3</label>
+              </div>
+            </fieldset>
+            <p class="sizes__erro" data-erro-tam role="alert" hidden>Escolha um tamanho antes de adicionar.</p>
             <button class="btn btn--secondary card__add" type="button" data-add
-                    data-nome="Retrô Gales 1987" data-preco="25990" data-tamanho="M"
+                    data-nome="Retrô Gales 1987" data-preco="25990"
                     data-foto="assets/produto-gales-1987.svg">Adicionar à sacola</button>
           </div>
         </li>
@@ -1492,12 +1542,22 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
             <p class="card__prices"><span class="card__was">R$ 319,00</span>
               <span class="price card__now card__now--off">R$ 245,00</span></p>
             <p class="card__inst" data-parcela></p>
-            <p class="card__sizes-label">Tamanhos: PP ao G3</p>
-            <ul class="chips" aria-hidden="true">
-              <li class="chip">PP</li><li class="chip">P</li><li class="chip">M</li><li class="chip">G</li><li class="chip">GG</li><li class="chip">G1</li><li class="chip">G2</li><li class="chip">G3</li>
-            </ul>
+            <fieldset class="sizes" data-sizes>
+              <legend class="sizes__label">Tamanho</legend>
+              <div class="sizes__chips">
+                <input class="sizes__radio" type="radio" name="tam-escocia-1990" id="tam-escocia-1990-pp" value="PP"><label class="chip" for="tam-escocia-1990-pp">PP</label>
+                <input class="sizes__radio" type="radio" name="tam-escocia-1990" id="tam-escocia-1990-p" value="P"><label class="chip" for="tam-escocia-1990-p">P</label>
+                <input class="sizes__radio" type="radio" name="tam-escocia-1990" id="tam-escocia-1990-m" value="M"><label class="chip" for="tam-escocia-1990-m">M</label>
+                <input class="sizes__radio" type="radio" name="tam-escocia-1990" id="tam-escocia-1990-g" value="G"><label class="chip" for="tam-escocia-1990-g">G</label>
+                <input class="sizes__radio" type="radio" name="tam-escocia-1990" id="tam-escocia-1990-gg" value="GG"><label class="chip" for="tam-escocia-1990-gg">GG</label>
+                <input class="sizes__radio" type="radio" name="tam-escocia-1990" id="tam-escocia-1990-g1" value="G1"><label class="chip" for="tam-escocia-1990-g1">G1</label>
+                <input class="sizes__radio" type="radio" name="tam-escocia-1990" id="tam-escocia-1990-g2" value="G2"><label class="chip" for="tam-escocia-1990-g2">G2</label>
+                <input class="sizes__radio" type="radio" name="tam-escocia-1990" id="tam-escocia-1990-g3" value="G3"><label class="chip" for="tam-escocia-1990-g3">G3</label>
+              </div>
+            </fieldset>
+            <p class="sizes__erro" data-erro-tam role="alert" hidden>Escolha um tamanho antes de adicionar.</p>
             <button class="btn btn--secondary card__add" type="button" data-add
-                    data-nome="Retrô Escócia 1990" data-preco="24500" data-tamanho="G"
+                    data-nome="Retrô Escócia 1990" data-preco="24500"
                     data-foto="assets/produto-escocia-1990.svg">Adicionar à sacola</button>
           </div>
         </li>
@@ -2347,14 +2407,38 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
   });
 
   // Adicionar à sacola a partir dos cards
+  // Limpa o aviso assim que o cliente escolhe
+  document.querySelectorAll('[data-sizes]').forEach(function (g) {
+    g.addEventListener('change', function () {
+      var erro = g.parentNode.querySelector('[data-erro-tam]');
+      if (erro) { erro.hidden = true; }
+    });
+  });
+
   document.querySelectorAll('[data-add]').forEach(function (b) {
     b.addEventListener('click', function () {
+      // Peça de tamanho único traz o tamanho no próprio botão.
+      // As demais só entram na sacola com um tamanho escolhido.
+      var corpo = b.parentNode;
+      var grupo = corpo.querySelector('[data-sizes]');
+      var tamanho = b.dataset.tamanho || '';
+      if (grupo) {
+        var marcado = grupo.querySelector('.sizes__radio:checked');
+        var erro = corpo.querySelector('[data-erro-tam]');
+        if (!marcado) {
+          if (erro) { erro.hidden = false; }
+          grupo.querySelector('.sizes__radio').focus();
+          return;
+        }
+        if (erro) { erro.hidden = true; }
+        tamanho = marcado.value;
+      }
       var existente = sacola.filter(function (x) {
-        return x.nome === b.dataset.nome && x.tamanho === b.dataset.tamanho;
+        return x.nome === b.dataset.nome && x.tamanho === tamanho;
       })[0];
       if (existente) { existente.qtd++; }
       else {
-        sacola.push({ id: proximoId++, nome: b.dataset.nome, tamanho: b.dataset.tamanho,
+        sacola.push({ id: proximoId++, nome: b.dataset.nome, tamanho: tamanho,
                       preco: +b.dataset.preco, qtd: 1, foto: b.dataset.foto });
       }
       renderSacola();
