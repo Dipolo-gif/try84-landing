@@ -1,0 +1,154 @@
+TRY84 — Design System (base v1)
+
+Direção extraída das referências: rugby de herança ("old money", verde profundo + gola creme, tipografia larga e pesada) cruzado com a energia de campanha esportiva (azul meia-noite, luz de estúdio, vermelho de bola). O verde é a marca, o creme é o respiro, o azul é a profundidade do hero e o vermelho é ação/urgência — e só isso.
+
+Nota: as imagens de referência são peças autorais de terceiros (©AMR Ahmed / Lunex). O que se extrai aqui é linguagem visual — logo, marca-d'água e nome Lunex não devem ser reproduzidos.
+
+1. CORES
+Paleta principal
+Token	Hex	Uso
+--green-900	
+#13322B	Cor-marca. Header, botões primários, footer, textos de destaque
+--green-700	
+#1D4A3E	Hover do primário, estados ativos
+--cream-100	
+#ECE5D5	Superfície principal clara. Fundo do site, texto sobre verde
+--ink-900	
+#101010	Texto principal, fundo de seções "black edition"
+Paleta secundária
+Token	Hex	Uso
+--navy-900	
+#0B1E30	Fundo de hero, seções imersivas, banners de campanha
+--navy-600	
+#1C3E5C	Gradiente/luz sobre o navy, bordas em fundo escuro
+--sage-400	
+#8FA37E	Tipografia gigante de fundo, detalhes decorativos, ícones
+--greige-200	
+#CFC7BF	Fundo alternado de seção, faixa de confiança, placeholders
+Suporte (funcional)
+Token	Hex	Uso
+--red-600	
+#C1272D	Só para preço promocional, badge de % OFF, urgência
+--gold-500	
+#B08D4F	Selo "oficial", edições limitadas, retrô (uso raro)
+--success	
+#2E7D5B	"Em estoque", confirmação, frete grátis
+--warn	
+#B26A00	"Últimas unidades", prazo estendido
+--error	
+#A32020	Erro de formulário, esgotado
+--line	
+#D6CEC2	Bordas, divisórias, contorno de input
+--muted	
+#6B6459	Texto secundário, legendas, breadcrumb
+
+Regras de aplicação
+
+Fundo padrão do site é --cream-100, não branco puro. O branco (
+#FFFFFF) só existe dentro de cards de produto, para a foto respirar.
+Vermelho nunca é cor de botão principal — se ele aparecer em toda parte, para de significar desconto.
+Proporção alvo: 60% creme/greige · 25% verde · 10% navy/ink · 5% vermelho+dourado.
+Contraste mínimo AA: --green-900 sobre creme = 11:1 ✓ · --red-600 sobre branco = 5.9:1 ✓ · nunca usar --sage-400 em texto abaixo de 24px.
+2. TIPOGRAFIA
+
+Três papéis, três fontes. Todas disponíveis no Google Fonts.
+
+Papel	Fonte	Alternativa	Caráter
+Display	Archivo Expanded (700/800)	Anton, Archivo Black	Larga e pesada, como os letreiros das referências
+Texto	Instrument Sans (400/500/600)	Public Sans, Figtree	Humanista, legível em bloco longo
+Utilitário	IBM Plex Mono (500, uppercase)	Space Mono	Etiquetas, preço, tamanho, código de produto
+Hierarquia
+Nível	Fonte	Tamanho (desktop / mobile)	Peso	Tracking	Caixa
+H1 / Hero	Archivo Expanded	72–96px / 40px	800	-0.03em	MAIÚSCULA
+H2 / Seção	Archivo Expanded	40px / 28px	700	-0.02em	MAIÚSCULA
+H3 / Card, subseção	Instrument Sans	24px / 20px	600	-0.01em	Frase
+H4 / Nome do produto	Instrument Sans	18px / 16px	500	0	Frase
+Corpo	Instrument Sans	16px / 15px	400	0	Frase
+Corpo pequeno / legenda	Instrument Sans	14px	400	0	Frase
+Eyebrow / etiqueta	IBM Plex Mono	12px	500	0.12em	MAIÚSCULA
+Preço	IBM Plex Mono	20px / 18px	500	0	—
+
+Regras
+
+Altura de linha: 1.0 no display, 1.3 nos títulos, 1.6 no corpo.
+Nome de produto nunca em caixa alta — dificulta leitura em grid e é o texto mais escaneado da loja.
+Largura máxima de parágrafo: 68 caracteres.
+Preço sempre em mono: os dígitos alinham verticalmente no grid e o olho compara mais rápido.
+3. COMPONENTES
+Botões
+
+Altura 48px (desktop) / 52px (mobile, área de toque). Padding lateral 24px. Fonte Instrument Sans 16px/600, sentença ("Adicionar à sacola", não "Enviar").
+
+Variante	Fundo	Texto	Borda	Hover
+Primário	--green-900	--cream-100	—	--green-700 + translateY(-1px)
+Secundário	transparente	--green-900	1.5px --green-900	fundo --green-900, texto creme
+Sobre fundo escuro	--cream-100	--ink-900	—	
+#FFFFFF
+Urgência (opcional)	--red-600	#FFF	—	
+#A32020
+Ghost / link	transparente	--green-900	—	sublinhado 1px
+Desabilitado	--greige-200	--muted	—	sem efeito
+Foco visível obrigatório: outline: 2px solid --navy-600; outline-offset: 2px.
+Um único botão primário por bloco visível. O CTA de compra é sempre o mais escuro e o mais largo da tela.
+Inputs de formulário
+Altura 48px, padding 14px 16px, fundo 
+#FFFFFF, borda 1px --line, raio 4px.
+Label acima do campo, 14px, --muted, sempre visível (nunca só placeholder).
+Foco: borda 1.5px --green-900 + halo rgba(19,50,43,0.12).
+Erro: borda --error + mensagem 13px abaixo, dizendo o que fazer ("Informe um CEP com 8 dígitos"), não "Campo inválido".
+Seletor de tamanho: não é <select> — são chips quadrados de 44×44px, borda 1px --line, selecionado com fundo --green-900. Esgotado fica riscado na diagonal e não clicável.
+CEP/frete: campo curto + botão secundário "Calcular" lado a lado, ainda na página do produto.
+Cards de produto
+Fundo 
+#FFFFFF, sem sombra, borda 1px --line. Raio 0 na imagem, 4px no card.
+Proporção da foto 4:5 (vertical valoriza a camisa). Segunda foto no hover.
+Ordem interna: badge → foto → nome (H4) → preço → parcelamento → chips de tamanho.
+Badge no canto superior esquerdo, formato pílula (raio 999px), mono 11px: -25% em --red-600, NOVO em --green-900, ESGOTADO em --muted.
+Preço: de-por na mesma linha — antigo em 14px --muted riscado, atual em mono 20px --green-900 (ou --red-600 se houver desconto). Abaixo, 13px: "12x de R$ 24,99".
+Hover: borda escurece para --green-900, imagem escala 1.02, transição 200ms.
+Outros padrões
+Barra de confiança: faixa --greige-200, 4 itens, ícone linear 24px + mono 12px maiúsculo.
+Etiqueta/pill: elemento assinatura da marca (vem da etiqueta na nuca da camisa) — usado em badges, filtros ativos e tags de coleção. É o único elemento totalmente arredondado do sistema.
+Barra fixa mobile: ao rolar a página de produto, fixa no rodapé com preço + "Adicionar à sacola".
+Menu: máximo 6 itens. Header 72px, encolhe para 56px no scroll, sempre com busca e sacola visíveis.
+4. ESTÉTICA
+Arredondamento
+
+Sistema quase reto — a peça de referência é rígida, esportiva e editorial.
+
+Elemento	Raio
+Imagens, banners, hero	0
+Cards, modais, faixas	4px
+Botões, inputs, chips	4px
+Badges, tags, filtros ativos, avatar	999px
+
+Nada entre 8px e 20px. É esse contraste (reto vs. pílula total) que dá identidade.
+
+Sombras
+
+Sombra é para o que flutua, não para o que está na página.
+
+--shadow-none: cards, seções, imagens → usar borda --line no lugar.
+--shadow-sm: 0 1px 2px rgba(16,16,16,0.06) → header no scroll, chips ativos.
+--shadow-md: 0 8px 24px rgba(16,16,16,0.10) → dropdown, carrinho lateral, tooltip.
+--shadow-lg: 0 20px 48px rgba(16,16,16,0.18) → modal e barra fixa mobile.
+Nunca sombra colorida ou glow.
+Espaçamento
+
+Base 4px. Escala: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96 · 128.
+
+Padding vertical de seção: 96px desktop / 56px mobile.
+Gap do grid de produtos: 24px desktop / 12px mobile.
+Container: máx 1280px, margem lateral 24px (16px mobile).
+Grid: 12 colunas desktop · 8 tablet · 4 mobile. Vitrine: 4 produtos por linha desktop, 2 no mobile (nunca 1 — 2 colunas fazem o cliente comparar e rolar menos).
+Respiro entre título de seção e conteúdo: 32px. Entre blocos relacionados: 16px. Entre blocos não relacionados: 48px+.
+Movimento
+Transições 200ms ease-out. Nada acima de 400ms.
+Só três momentos animados: hover de card, entrada do carrinho lateral, revelação do hero. Respeitar prefers-reduced-motion.
+5. PRINCÍPIOS DE CONVERSÃO
+Preço, frete e parcelamento visíveis sem clique — os três motivos de abandono resolvidos no card.
+Um CTA por tela. Se tudo é destaque, nada é.
+Escassez só quando verdadeira. "Últimas 3 unidades" só se forem 3.
+Foto grande, fundo neutro, modelo vestindo. A camisa é o produto e a propaganda.
+Checkout em no máximo 3 passos, com o resumo do pedido sempre visível.
+Prova social perto do botão de compra, não no fim da página.
