@@ -80,10 +80,16 @@ Dois cuidados que já estão tratados no arquivo da função:
 Outros pontos a revisar:
 
 - **Bandeiras aceitas** são placeholders. Confirme quais você realmente aceita.
-- **Preços, CNPJ, WhatsApp e e-mail** estão como placeholder no texto.
-- **Fotos** vêm de Pexels e Unsplash por URL. Para produção, baixe, converta para
-  WebP e sirva do seu próprio domínio. As ilustrações vetoriais da marca ficam
-  embutidas como fallback caso alguma foto não carregue.
+- **Especificações do produto** (gramatura, costura, prazos, política de troca)
+  são valores plausíveis que eu escrevi para a página não ficar vaga. Confira
+  cada um antes de publicar: são promessas ao cliente.
+- **CNPJ, WhatsApp, e-mail e redes sociais** estão comentados no HTML com TODO,
+  não aparecem na página. Preencha com os dados reais.
+- **Nomes de seleções e clubes** nos produtos são reais. Vender camisa oficial
+  exige licenciamento; confirme antes de anunciar como oficial.
+- **Imagens** ficam em `/assets`, servidas do próprio repositório. As fotos de
+  ambiente são WebP; os produtos são mockups vetoriais em SVG, que pesam menos e
+  não pixelam. Nenhuma requisição sai para servidor de terceiro.
 - **Tipografia**: o design system pede Archivo Expanded, Instrument Sans e IBM Plex
   Mono. Como o requisito era não ter dependências externas, a página usa pilhas de
   fontes locais com as métricas do design system. Para carregar as fontes reais,
