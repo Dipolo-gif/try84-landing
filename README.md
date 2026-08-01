@@ -22,13 +22,60 @@ Abra o `index.html` no navegador ou acesse a versão publicada.
 - Modais com foco preso, retorno de foco e fechamento por `Esc`
 - Todo o movimento desligado sob `prefers-reduced-motion`
 
-## Antes de usar em produção
+## Pagamento
 
-**O pagamento é demonstração.** Nenhum dado sai da página: não há `action`, `fetch`
-nem `XMLHttpRequest`. Para cobrar de verdade, integre um meio de pagamento
-(Pagar.me, Mercado Pago, Stripe) usando os campos hospedados ou a tokenização
-dele. Número de cartão em claro não pode passar pelo seu servidor: isso é
+Tudo é controlado por um único bloco no topo do `<script>` do `index.html`:
+
+```js
+var PAGAMENTO = {
+  pix:      { chave: '', tipo: 'telefone', recebedor: '', cidade: '' },
+  whatsapp: '',      // só dígitos com DDI. ex: 5584994137144
+  linkFixo: '',      // link de pagamento fixo do Mercado Pago/PagSeguro
+  api: ''            // endpoint da função serverless
+};
+```
+
+O que ficar vazio não aparece na tela. Enquanto nada estiver preenchido, o
+checkout mostra o aviso de demonstração e não processa nada.
+
+### Pix copia e cola
+
+Preencha `chave`, `tipo`, `recebedor` e `cidade`. O código Pix (BR Code) é
+gerado no próprio navegador, com o valor exato da sacola, seguindo o padrão EMV
+do Banco Central. O CRC16-CCITT foi conferido contra o valor de verificação
+canônico do padrão (`123456789` → `29B1`).
+
+O campo `tipo` importa: chave de telefone precisa virar `+55DDDNÚMERO`, chave de
+CPF vai só com os 11 dígitos. Formato errado gera um código que não cai na sua
+conta.
+
+Limitação: a confirmação é manual, você confere no extrato. Pix com baixa
+automática exige webhook, ou seja, servidor.
+
+### WhatsApp
+
+Preencha `whatsapp`. O botão monta a mensagem com itens, tamanhos e total e abre
+a conversa. Funciona sem servidor nenhum.
+
+### Cartão automático
+
+Preencha `linkFixo` (mais simples, valor fixo) **ou** `api` (valor dinâmico).
+
+Para o `api`, veja [`api/criar-preferencia.js`](api/criar-preferencia.js). Ele
+roda na Vercel ou Netlify, **não no GitHub Pages**, que só serve arquivos
+estáticos. Quando qualquer um dos dois estiver configurado, os campos de cartão
+somem da tela e o cliente vai para o ambiente do meio de pagamento. É de
+propósito: número de cartão em claro não pode passar pelo seu código, isso é
 exigência de PCI-DSS.
+
+Dois cuidados que já estão tratados no arquivo da função:
+
+- A **chave secreta** fica em variável de ambiente, nunca no `index.html`, que é
+  público.
+- O **preço sai do servidor**, não do que o navegador enviou. Sem isso, dá para
+  alterar o total no devtools e fechar o pedido por um centavo.
+
+## Antes de usar em produção
 
 Outros pontos a revisar:
 

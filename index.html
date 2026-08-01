@@ -1015,6 +1015,24 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
 .campo__erro{font-size:13px;color:var(--error);min-height:18px}
 .campo__dica{font-size:13px;color:var(--muted)}
 
+/* Bloco do codigo Pix copia e cola */
+.pix-codigo{margin-top:var(--s6);display:flex;flex-direction:column;gap:var(--s3)}
+.pix-codigo label{font-size:var(--fs-small);color:var(--muted)}
+.pix-codigo textarea{
+  width:100%;padding:14px 16px;
+  background:var(--white);color:var(--ink-900);
+  border:1px solid var(--line);border-radius:4px;
+  font-family:var(--font-mono);font-size:13px;line-height:1.5;resize:vertical;
+  word-break:break-all;
+}
+.pix-codigo textarea:focus{outline:none;border:1.5px solid var(--green-900);box-shadow:0 0 0 4px rgba(19,50,43,.12)}
+.pix-codigo .btn{align-self:flex-start}
+.pix-aviso{font-size:13px;color:var(--success)}
+
+/* Botao do WhatsApp, alternativa ao pagamento automatico */
+.btn--whats{background:var(--green-700);color:var(--cream-100);margin-top:var(--s3)}
+.btn--whats:hover{background:var(--green-900);transform:translateY(-1px)}
+
 .pagamento-painel{margin-bottom:var(--s8)}
 .pagamento-painel p{max-width:60ch;color:var(--muted);font-size:var(--fs-small)}
 .pagamento-painel p + p{margin-top:var(--s3)}
@@ -2068,7 +2086,11 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
         </div>
 
         <div class="pagamento-painel" id="painel-cartao">
-          <div class="campos">
+          <!-- Quando há meio de pagamento configurado, estes campos somem e o
+               cliente vai para o ambiente do PSP. Assim o número do cartão
+               nunca passa por aqui, que é a exigência do PCI-DSS. -->
+          <p id="cartaoRedirect" hidden>Você será levado ao ambiente seguro do meio de pagamento para informar os dados do cartão.</p>
+          <div class="campos" id="camposCartao">
             <div class="campo campo--full">
               <label for="ccNumero">Número do cartão</label>
               <input id="ccNumero" name="ccNumero" type="text" inputmode="numeric" autocomplete="cc-number"
@@ -2104,6 +2126,13 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
         <div class="pagamento-painel" id="painel-pix" hidden>
           <p>Ao confirmar, um código Pix é gerado para você pagar no aplicativo do seu banco.</p>
           <p>O pedido é liberado assim que o pagamento é aprovado.</p>
+
+          <div class="pix-codigo" id="pixCodigo" hidden>
+            <label for="pixTexto">Código Pix copia e cola</label>
+            <textarea id="pixTexto" rows="4" readonly spellcheck="false"></textarea>
+            <button class="btn btn--secondary" type="button" id="pixCopiar">Copiar código</button>
+            <p class="pix-aviso" id="pixAviso" role="status"></p>
+          </div>
         </div>
 
         <div class="pagamento-painel" id="painel-boleto" hidden>
@@ -2113,6 +2142,7 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
 
         <div class="checkout__acao">
           <button class="btn btn--primary btn--block" type="submit" id="btnPagar">Pagar</button>
+          <button class="btn btn--whats btn--block" type="button" id="btnWhats" hidden>Finalizar pelo WhatsApp</button>
           <p class="checkout__aviso" id="checkoutAviso" role="status" aria-live="polite" hidden></p>
         </div>
       </form>
@@ -2154,6 +2184,36 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
 <script>
 (function () {
   'use strict';
+
+  /* ====================================================================
+     CONFIGURAÇÃO DE PAGAMENTO
+     Preencha o que você usa. O que ficar vazio simplesmente não aparece,
+     e o checkout segue em modo demonstração.
+     A chave secreta do meio de pagamento NUNCA entra aqui: este arquivo
+     é público. Ela vive só na função de servidor apontada por "api".
+     ==================================================================== */
+  var PAGAMENTO = {
+    pix: {
+      chave: '84994137144',
+      // 'telefone' | 'cpf' | 'cnpj' | 'email' | 'aleatoria'
+      // Isto muda o formato exigido pelo Banco Central: telefone vira
+      // +5584994137144, CPF vai só com os 11 dígitos. Formato errado, Pix
+      // que não cai.
+      tipo: 'telefone',
+      recebedor: 'TRY84',        // máx. 25 caracteres, sem acento
+      cidade: 'SAO PAULO'        // máx. 15 caracteres, sem acento
+    },
+    whatsapp: '',                // só dígitos com DDI. ex: 5584994137144
+    linkFixo: '',                // link de pagamento fixo do Mercado Pago/PagSeguro
+    api: ''                      // endpoint da função serverless (ver api/criar-preferencia.js)
+  };
+
+  // Calculado aqui, junto da config, porque a interface do checkout consulta
+  // estas flags bem antes do trecho onde elas estavam declaradas.
+  var temPix = !!(PAGAMENTO.pix.chave && PAGAMENTO.pix.recebedor && PAGAMENTO.pix.cidade);
+  var temWhats = !!PAGAMENTO.whatsapp;
+  var temCartao = !!(PAGAMENTO.api || PAGAMENTO.linkFixo);
+
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- Imagem que falha cede lugar à ilustração de fundo ---------- */
@@ -2682,7 +2742,9 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
     e.preventDefault();
     limparErros();
 
-    if (metodoAtual() === 'cartao') {
+    // Só valida cartão aqui quando não há PSP: com PSP os campos ficam ocultos
+    // e quem coleta o cartão é o ambiente seguro dele.
+    if (metodoAtual() === 'cartao' && !temCartao) {
       var digitos = ccNumero.value.replace(/\D/g, '');
       var primeiro = null;
       if (!luhn(digitos)) {
@@ -2712,12 +2774,158 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
       if (primeiro) { primeiro.focus(); return; }
     }
 
+    var metodo = metodoAtual();
+
+    // Pix: gera o código com o valor exato da sacola
+    if (metodo === 'pix' && temPix) {
+      var campoPix = document.getElementById('pixTexto');
+      campoPix.value = gerarPix(totalSacola());
+      document.getElementById('pixCodigo').hidden = false;
+      document.getElementById('pixAviso').textContent = '';
+      checkoutAviso.hidden = true;
+      campoPix.focus();
+      campoPix.select();
+      return;
+    }
+
+    // Cartão com link fixo: manda direto para o link do meio de pagamento
+    if (metodo === 'cartao' && PAGAMENTO.linkFixo) {
+      window.location.href = PAGAMENTO.linkFixo;
+      return;
+    }
+
+    // Função de servidor: ela cria a cobrança e devolve a url do checkout
+    if (PAGAMENTO.api) {
+      btnPagar.disabled = true;
+      btnPagar.textContent = 'Redirecionando...';
+      fetch(PAGAMENTO.api, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ metodo: metodo, itens: sacola, total: totalSacola() })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.url) { window.location.href = d.url; return; }
+          throw new Error('resposta sem url');
+        })
+        .catch(function () {
+          btnPagar.disabled = false;
+          atualizarBotaoPagar();
+          checkoutAviso.hidden = false;
+          checkoutAviso.dataset.estado = '';
+          checkoutAviso.textContent = 'Não foi possível iniciar o pagamento agora. Tente novamente em alguns instantes.';
+        });
+      return;
+    }
+
+    // Nada configurado para este método: segue em demonstração
     checkoutAviso.hidden = false;
     checkoutAviso.dataset.estado = 'ok';
     checkoutAviso.textContent =
       'Demonstração: nenhum pagamento foi processado e nenhum dado saiu desta página. ' +
       'Conecte um meio de pagamento para ativar a cobrança.';
   });
+
+  /* ---------- Liga os meios que estiverem configurados ---------- */
+  if (temCartao) {
+    document.getElementById('camposCartao').hidden = true;
+    document.getElementById('cartaoRedirect').hidden = false;
+  }
+  if (temWhats) {
+    var btnWhats = document.getElementById('btnWhats');
+    btnWhats.hidden = false;
+    btnWhats.addEventListener('click', function () {
+      window.open('https://wa.me/' + PAGAMENTO.whatsapp.replace(/\D/g, '') +
+                  '?text=' + encodeURIComponent(mensagemPedido()), '_blank', 'noopener');
+    });
+  }
+  if (temPix || temWhats || temCartao) {
+    document.querySelector('.checkout__demo').hidden = true;
+  }
+
+  document.getElementById('pixCopiar').addEventListener('click', function () {
+    var campo = document.getElementById('pixTexto');
+    var aviso = document.getElementById('pixAviso');
+    campo.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(campo.value).then(function () {
+        aviso.textContent = 'Código copiado. Cole no aplicativo do seu banco.';
+      }, function () {
+        aviso.textContent = ok ? 'Código copiado. Cole no aplicativo do seu banco.'
+                               : 'Selecione o código acima e copie manualmente.';
+      });
+    } else {
+      aviso.textContent = ok ? 'Código copiado. Cole no aplicativo do seu banco.'
+                             : 'Selecione o código acima e copie manualmente.';
+    }
+  });
+
+  /* ---------- Pix: geração do BR Code (padrão EMV do Banco Central) ----------
+     Campo = id + tamanho em 2 dígitos + valor. O CRC16-CCITT no fim é
+     calculado sobre a string inteira, já incluindo o "6304". */
+  function pixTLV(id, valor) {
+    return id + String(valor.length).padStart(2, '0') + valor;
+  }
+  function pixAscii(s, max) {
+    return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^A-Za-z0-9 ]/g, '').trim().slice(0, max);
+  }
+  function crc16(str) {
+    var crc = 0xFFFF;
+    for (var i = 0; i < str.length; i++) {
+      crc ^= str.charCodeAt(i) << 8;
+      for (var j = 0; j < 8; j++) {
+        crc = (crc & 0x8000) ? (((crc << 1) ^ 0x1021) & 0xFFFF) : ((crc << 1) & 0xFFFF);
+      }
+    }
+    return crc.toString(16).toUpperCase().padStart(4, '0');
+  }
+  function chavePixFormatada() {
+    var k = String(PAGAMENTO.pix.chave || '').trim();
+    if (!k) { return ''; }
+    var t = PAGAMENTO.pix.tipo;
+    if (t === 'telefone') {
+      var d = k.replace(/\D/g, '');
+      if (d.length === 11) { d = '55' + d; }   // sem DDI: assume Brasil
+      return '+' + d;
+    }
+    if (t === 'cpf' || t === 'cnpj') { return k.replace(/\D/g, ''); }
+    return k;                                   // e-mail ou chave aleatória
+  }
+  function gerarPix(centavos) {
+    var chave = chavePixFormatada();
+    if (!chave) { return ''; }
+    var conta = pixTLV('00', 'br.gov.bcb.pix') + pixTLV('01', chave);
+    var payload =
+      pixTLV('00', '01') +
+      pixTLV('01', '12') +                                  // uso único
+      pixTLV('26', conta) +
+      pixTLV('52', '0000') +
+      pixTLV('53', '986') +                                 // BRL
+      pixTLV('54', (centavos / 100).toFixed(2)) +
+      pixTLV('58', 'BR') +
+      pixTLV('59', pixAscii(PAGAMENTO.pix.recebedor, 25)) +
+      pixTLV('60', pixAscii(PAGAMENTO.pix.cidade, 15)) +
+      pixTLV('62', pixTLV('05', '***'));
+    var parcial = payload + '6304';
+    return parcial + crc16(parcial);
+  }
+
+  /* ---------- Pedido por WhatsApp ---------- */
+  function mensagemPedido() {
+    var linhas = ['Ola! Quero finalizar meu pedido na Try84.', ''];
+    sacola.forEach(function (it) {
+      linhas.push('- ' + it.nome + ' | Tam. ' + it.tamanho + ' | ' + it.qtd + 'x | ' + moeda(it.preco * it.qtd));
+    });
+    var total = totalSacola();
+    linhas.push('');
+    linhas.push('Total: ' + moeda(total));
+    linhas.push(total >= LIMITE_FRETE ? 'Frete: gratis' : 'Frete: a combinar');
+    return linhas.join('\n');
+  }
+
 
   var checkoutOrigem = null;
   function abrirCheckout() {
