@@ -1507,6 +1507,27 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
             <h3 class="h4 card__name"><a href="#produtos">Camiseta Jogo Crusaders 2023</a></h3>
             <p class="card__prices"><span class="price card__now">R$ 365,00</span></p>
             <p class="card__inst" data-parcela></p>
+            <p class="card__sizes-label">Tamanhos: PP ao G3</p>
+            <ul class="chips" aria-hidden="true">
+              <li class="chip chip--out">PP</li><li class="chip chip--out">P</li><li class="chip chip--out">M</li><li class="chip chip--out">G</li><li class="chip chip--out">GG</li><li class="chip chip--out">G1</li><li class="chip chip--out">G2</li><li class="chip chip--out">G3</li>
+            </ul>
+            <button class="btn btn--secondary card__add" type="button" disabled>Esgotado</button>
+          </div>
+        </li>
+
+        <li class="card" data-cat="retro" data-preco="25990">
+          <div class="card__media">
+            <img src="assets/produto-gales-1987.svg" width="400" height="500"
+                 loading="lazy" decoding="async" alt="Camisa de rugby creme com listras verdes">
+            <button class="zoom" type="button" aria-label="Ampliar foto de Retrô Gales 1987"
+                    data-full="assets/produto-gales-1987.svg" data-caption="Retrô Gales 1987">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/></svg>
+            </button>
+          </div>
+          <div class="card__body">
+            <h3 class="h4 card__name"><a href="#produtos">Retrô Gales 1987</a></h3>
+            <p class="card__prices"><span class="price card__now">R$ 259,90</span></p>
+            <p class="card__inst" data-parcela></p>
             <fieldset class="sizes" data-sizes>
               <legend class="sizes__label">Tamanho</legend>
               <div class="sizes__chips">
@@ -1600,6 +1621,25 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
             <button class="btn btn--secondary card__add" type="button" data-add
                     data-nome="Bucket Hat Try84" data-preco="13950" data-tamanho="U"
                     data-foto="assets/produto-bucket.svg">Adicionar à sacola</button>
+          </div>
+        </li>
+        <li class="card" data-cat="acessorios" data-preco="100">
+          <div class="card__media">
+            <img src="assets/produto-adesivo.svg" width="400" height="500"
+                 loading="lazy" decoding="async" alt="Adesivo redondo verde com marca TRY84">
+            <button class="zoom" type="button" aria-label="Ampliar foto de Adesivo Try84"
+                    data-full="assets/produto-adesivo.svg" data-caption="Adesivo Try84">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/></svg>
+            </button>
+          </div>
+          <div class="card__body">
+            <h3 class="h4 card__name"><a href="#produtos">Adesivo Try84</a></h3>
+            <p class="card__prices"><span class="price card__now">R$ 1,00</span></p>
+            <p class="card__inst" data-parcela></p>
+            <p class="card__sizes-label">Tamanho único, 7 cm</p>
+            <button class="btn btn--secondary card__add" type="button" data-add
+                    data-nome="Adesivo Try84" data-preco="100" data-tamanho="U"
+                    data-foto="assets/produto-adesivo.svg">Adicionar à sacola</button>
           </div>
         </li>
       </ul>
@@ -2343,7 +2383,7 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
     document.getElementById('cartSubtotal').textContent = moeda(subtotal);
     document.getElementById('cartTotal').textContent = moeda(subtotal);
     document.getElementById('cartParcela').textContent =
-      subtotal ? '12x de ' + moeda(Math.round(subtotal / 12)) + ' sem juros' : 'Em até 12x sem juros';
+      subtotal ? parcelamento(subtotal) : 'Em até 12x sem juros';
 
     cartFinalizar.setAttribute('aria-disabled', String(sacola.length === 0));
     document.getElementById('bagCount').textContent = unidades;
@@ -2448,6 +2488,16 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
 
   renderSacola();
 
+  // Número de parcelas pela regra da aba de Pagamento: 12x no máximo,
+  // nunca abaixo do mínimo de R$ 30 por parcela. O mínimo fica dentro da
+  // função de propósito: renderSacola roda antes deste ponto do arquivo, e
+  // um var declarado aqui chegaria lá como undefined.
+  function parcelamento(valor) {
+    var n = Math.min(12, Math.floor(valor / 3000));
+    if (n < 2) { return 'Pagamento à vista'; }
+    return n + 'x de ' + moeda(Math.ceil(valor / n)) + ' sem juros';
+  }
+
   /* ---------- Números derivados dos preços ----------
      O percentual e a parcela saem da conta, não de valor digitado no HTML.
      Assim, mudar um preço não deixa o selo mentindo. */
@@ -2456,7 +2506,7 @@ h1,h2,h3,h4{margin:0;text-wrap:balance}
     if (!preco) { return; }
 
     var parcela = c.querySelector('[data-parcela]');
-    if (parcela) { parcela.textContent = '12x de ' + moeda(Math.round(preco / 12)) + ' sem juros'; }
+    if (parcela) { parcela.textContent = parcelamento(preco); }
 
     var selo = c.querySelector('[data-desconto]');
     var de = parseInt(c.dataset.de, 10);

@@ -51,8 +51,14 @@ O campo `tipo` importa: chave de telefone precisa virar `+55DDDNÚMERO`, chave d
 CPF vai só com os 11 dígitos. Formato errado gera um código que não cai na sua
 conta.
 
-Limitação: a confirmação é manual, você confere no extrato. Pix com baixa
-automática exige webhook, ou seja, servidor.
+Limitação: **a confirmação é manual**. O site gera o código e mostra na tela,
+mas não fica sabendo se o dinheiro entrou: quem confere o extrato é você, e é
+você quem libera o pedido. Baixa automática exige um webhook do PSP batendo em
+um servidor seu, que o GitHub Pages não roda.
+
+Para testar o fluxo com dinheiro de verdade sem gastar, o catálogo tem o
+**Adesivo Try84 a R$ 1,00**. O código Pix sai com o valor exato da sacola,
+então dá para escanear, pagar e conferir a entrada na conta.
 
 ### WhatsApp
 
@@ -82,6 +88,8 @@ Dois cuidados que já estão tratados no arquivo da função:
 Outros pontos a revisar:
 
 - **Bandeiras aceitas** são placeholders. Confirme quais você realmente aceita.
+- **Parcelamento** é calculado pela regra da aba de Pagamento: no máximo 12x e
+  nunca abaixo de R$ 30 por parcela. Mudar o mínimo muda a vitrine inteira.
 - **Especificações do produto** (gramatura, costura, prazos, política de troca)
   são valores plausíveis que eu escrevi para a página não ficar vaga. Confira
   cada um antes de publicar: são promessas ao cliente.

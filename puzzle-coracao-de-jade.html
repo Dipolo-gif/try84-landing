@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>O Coração de Jade — Enigma do Fluxo Arcano</title>
+<style>
+  /* ============================================================
+     PALETA & TOKENS
+     ============================================================ */
+  :root{
+    --void:        #06090c;
+    --stone-deep:  #0d1418;
+    --stone:       #131d22;
+    --stone-edge:  #22333b;
+
+    --jade:        #3ff0a8;
+    --jade-deep:   #0f6d4c;
+    --arcane:      #5aa8ff;
+    --arcane-deep: #1b3d78;
+    --gold:        #e8c06a;
+    --gold-deep:   #7a5a1c;
+    --blood:       #ff5a63;
+
+    --ink:         #cfe3e0;
+    --ink-dim:     #7b9096;
+
+    --serif: 'Cinzel', 'Trajan Pro', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+    --mono:  'IBM Plex Mono', 'Consolas', 'SF Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 700px at 50% -10%, #0f2a2410 0%, transparent 60%),
+      radial-gradient(900px 600px at 10% 100%, #10254a1f 0%, transparent 55%),
+      radial-gradient(900px 600px at 95% 20%, #3a2a0a14 0%, transparent 50%),
+      var(--void);
+    color:var(--ink);
+    font-family:var(--serif);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:clamp(16px,3vw,40px) 16px 60px;
+    overflow-x:hidden;
+  }
+
+  /* Poeira de runas no fundo */
+  body::before{
+    content:"";
+    position:fixed; inset:-20%;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, #3ff0a825, transparent 50%),
+      radial-gradient(2px 2px at 70% 60%, #5aa8ff20, transparent 50%),
+      radial-gradient(1px 1px at 45% 80%, #e8c06a25, transparent 50%),
+      radial-gradient(1px 1px at 85% 15%, #3ff0a820, transparent 50%),
+      radial-gradient(2px 2px at 12% 70%, #5aa8ff18, transparent 50%);
+    background-size:600px 600px, 700px 700px, 500px 500px, 800px 800px, 650px 650px;
+    animation:drift 90s linear infinite;
+    pointer-events:none;
+    z-index:0;
+  }
+  @keyframes drift{ to{ transform:translate3d(-120px,-160px,0) } }
+
+  /* ============================================================
+     CABEÇALHO
+     ============================================================ */
+  header{ text-align:center; position:relative; z-index:1; margin-bottom:clamp(14px,2.5vw,28px); }
+  h1{
+    margin:0;
+    font-size:clamp(1.5rem,4.2vw,2.6rem);
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    font-weight:600;
+    background:linear-gradient(100deg,var(--jade) 0%, #bfe9dd 30%, var(--gold) 62%, var(--arcane) 100%);
+    -webkit-background-clip:text; background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 0 22px #3ff0a833);
+  }
+  .sub{
+    margin:.6rem 0 0;
+    font-size:clamp(.72rem,1.6vw,.85rem);
+    letter-spacing:.42em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .rule-divider{
+    width:min(420px,80vw); height:1px; margin:1.1rem auto 0;
+    background:linear-gradient(90deg,transparent,var(--gold-deep),var(--jade-deep),var(--gold-deep),transparent);
+    box-shadow:0 0 14px #3ff0a830;
+  }
+
+  /* ============================================================
+     LAYOUT
+     ============================================================ */
+  main{
+    position:relative; z-index:1;
+    width:100%; max-width:1120px;
+    display:grid;
+    grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);
+    gap:clamp(18px,3vw,44px);
+    align-items:start;
+  }
+  @media (max-width:880px){
+    main{ grid-template-columns:1fr; }
+  }
+
+  /* ============================================================
+     O ALTAR (stage)
+     ============================================================ */
+  .altar{
+    position:relative;
+    width:100%;
+    max-width:640px;
+    margin-inline:auto;
+    aspect-ratio:1/1;
+    container-type:inline-size;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 50% 50%, #0c1a1a 0%, #08100f 45%, transparent 72%);
+    box-shadow:inset 0 0 90px #00000090;
+  }
+  /* anel giratório de runas */
+  .altar::before{
+    content:"";
+    position:absolute; inset:4%;
+    border-radius:50%;
+    background:conic-gradient(from 0deg, transparent 0 12%, #3ff0a814 14%, transparent 22%,
+               transparent 40%, #5aa8ff14 44%, transparent 52%,
+               transparent 72%, #e8c06a12 76%, transparent 84%);
+    animation:spin 46s linear infinite;
+    pointer-events:none;
+  }
+  .altar::after{
+    content:"";
+    position:absolute; inset:9%;
+    border-radius:50%;
+    border:1px solid #1e3b3a;
+    box-shadow:0 0 30px #3ff0a814 inset, 0 0 24px #00000080;
+    pointer-events:none;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg) } }
+
+  .altar.shake{ animation:shake .5s cubic-bezier(.36,.07,.19,.97); }
+  @keyframes shake{
+    10%,90%{ transform:translateX(-3px) }
+    20%,80%{ transform:translateX(6px) }
+    30%,50%,70%{ transform:translateX(-9px) }
+    40%,60%{ transform:translateX(9px) }
+  }
+
+  svg.web{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:1;
+    overflow:visible;
+  }
+  .guide{ fill:none; stroke:#1b3138; stroke-width:1.4; stroke-dasharray:5 9; opacity:.65; }
+
+  .edge-hit{ stroke:transparent; stroke-width:26; fill:none; pointer-events:stroke; cursor:pointer; }
+  .edge-glow{ fill:none; stroke:var(--jade); stroke-width:11; opacity:.16; filter:blur(6px); }
+  .edge-line{
+    fill:none; stroke:var(--jade); stroke-width:3.4; stroke-linecap:round;
+    filter:drop-shadow(0 0 6px #3ff0a8bb);
+    transition:stroke .25s ease, stroke-width .2s ease;
+  }
+  .edge:hover .edge-line{ stroke:var(--blood); stroke-width:4.4; filter:drop-shadow(0 0 9px #ff5a63cc); }
+  .edge:hover .edge-glow{ stroke:var(--blood); opacity:.3; }
+  .edge:hover .arrowhead{ fill:var(--blood); }
+  .arrowhead{ fill:var(--jade); transition:fill .25s ease; }
+
+  /* fluxo animado quando resolvido */
+  .solved .edge-line{
+    stroke:var(--gold);
+    stroke-dasharray:14 10;
+    filter:drop-shadow(0 0 10px #e8c06add);
+    animation:flow .85s linear infinite;
+  }
+  .solved .edge-glow{ stroke:var(--gold); opacity:.28; }
+  .solved .arrowhead{ fill:var(--gold); }
+  @keyframes flow{ to{ stroke-dashoffset:-24 } }
+
+  /* ============================================================
+     NÓS
+     ============================================================ */
+  .node{
+    position:absolute;
+    z-index:2;
+    width:17%;
+    aspect-ratio:1/1;
+    transform:translate(-50%,-50%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:.15em;
+    border-radius:50%;
+    cursor:pointer;
+    font-family:inherit;
+    color:var(--ink);
+    padding:0;
+    border:1.5px solid var(--stone-edge);
+    background:
+      radial-gradient(circle at 34% 28%, #24363c 0%, var(--stone) 46%, var(--stone-deep) 100%);
+    box-shadow:
+      0 0 0 1px #00000060,
+      0 8px 22px #00000080,
+      inset 0 1px 0 #ffffff10,
+      inset 0 -10px 20px #00000070;
+    transition:transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .28s ease, border-color .28s ease;
+  }
+  .node .icon{
+    font-size:5.2cqi;
+    line-height:1;
+    text-shadow:0 0 12px currentColor;
+    transition:text-shadow .3s ease;
+  }
+  .node .name{
+    font-size:2.35cqi;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    text-align:center;
+    line-height:1.15;
+    max-width:88%;
+    transition:color .3s ease;
+  }
+
+  .node[data-hue="gold"]  .icon{ color:var(--gold); }
+  .node[data-hue="arcane"].icon, .node[data-hue="arcane"] .icon{ color:var(--arcane); }
+  .node[data-hue="jade"]  .icon{ color:var(--jade); }
+
+  .node:hover, .node:focus-visible{
+    transform:translate(-50%,-50%) scale(1.07);
+    border-color:var(--jade-deep);
+    box-shadow:0 0 0 1px #00000060, 0 0 26px #3ff0a840, 0 10px 26px #000000a0,
+               inset 0 1px 0 #ffffff14, inset 0 -10px 20px #00000070;
+    outline:none;
+  }
+  .node:hover .name, .node:focus-visible .name{ color:var(--ink); }
+
+  .node.selected{
+    border-color:var(--gold);
+    transform:translate(-50%,-50%) scale(1.1);
+    box-shadow:0 0 0 2px #e8c06a55, 0 0 40px #e8c06a55, inset 0 0 26px #e8c06a22;
+    animation:pulse-gold 1.5s ease-in-out infinite;
+  }
+  .node.selected .name{ color:var(--gold); }
+  @keyframes pulse-gold{
+    50%{ box-shadow:0 0 0 3px #e8c06a35, 0 0 60px #e8c06a45, inset 0 0 30px #e8c06a2e; }
+  }
+
+  /* nó central */
+  .node.core{
+    width:20%;
+    border-color:#1d5a45;
+    background:
+      radial-gradient(circle at 38% 30%, #1a4a3d 0%, #0e2b25 48%, #071614 100%);
+    box-shadow:0 0 0 1px #00000060, 0 0 34px #3ff0a825, 0 10px 30px #000000a0,
+               inset 0 0 30px #3ff0a818;
+  }
+  .node.core .name{ font-size:2.1cqi; color:#7fc9b0; }
+  .node.core .icon{ font-size:6cqi; }
+
+  /* vitória */
+  .solved .node{
+    border-color:var(--gold);
+    box-shadow:0 0 0 1px #e8c06a40, 0 0 46px #3ff0a850, 0 0 90px #e8c06a30,
+               inset 0 0 26px #3ff0a820;
+    animation:ascend 2.4s ease-in-out infinite;
+  }
+  .solved .node .icon{ text-shadow:0 0 26px currentColor, 0 0 46px currentColor; }
+  .solved .node .name{ color:var(--gold); }
+  .solved .node.core{
+    animation:core-beat 1.5s ease-in-out infinite;
+  }
+  @keyframes ascend{
+    50%{ box-shadow:0 0 0 1px #e8c06a60, 0 0 70px #3ff0a866, 0 0 130px #e8c06a40,
+                    inset 0 0 34px #3ff0a830; }
+  }
+  @keyframes core-beat{
+    0%,100%{ transform:translate(-50%,-50%) scale(1) }
+    50%    { transform:translate(-50%,-50%) scale(1.09) }
+  }
+
+  /* ============================================================
+     PAINEL LATERAL — GRIMÓRIO
+     ============================================================ */
+  .grimoire{
+    border:1px solid #1b2b31;
+    border-radius:4px;
+    background:linear-gradient(180deg,#0c1418f0,#080e11f0);
+    box-shadow:0 20px 50px #00000070, inset 0 1px 0 #ffffff08;
+    padding:clamp(16px,2.2vw,26px);
+  }
+  .grimoire h2{
+    margin:0 0 .2rem;
+    font-size:.82rem; letter-spacing:.34em; text-transform:uppercase;
+    color:var(--gold); font-weight:600;
+  }
+  .grimoire .hint{ margin:0 0 1.1rem; font-size:.72rem; color:var(--ink-dim); letter-spacing:.08em; font-style:italic; }
+
+  ol.laws{ margin:0; padding:0 0 0 0; list-style:none; counter-reset:law; }
+  ol.laws li{
+    counter-increment:law;
+    position:relative;
+    padding:.62rem 0 .62rem 2.2rem;
+    font-size:.83rem; line-height:1.55;
+    color:#a9c2c0;
+    border-bottom:1px solid #131f24;
+  }
+  ol.laws li:last-child{ border-bottom:none; }
+  ol.laws li::before{
+    content:counter(law,upper-roman);
+    position:absolute; left:0; top:.62rem;
+    width:1.6rem; text-align:center;
+    font-size:.72rem; letter-spacing:.05em;
+    color:var(--jade);
+    text-shadow:0 0 10px #3ff0a870;
+  }
+  ol.laws li.broken{ color:var(--blood); }
+  ol.laws li.broken::before{ color:var(--blood); text-shadow:0 0 10px #ff5a6390; }
+  ol.laws li.ok::before{ content:"✦"; color:var(--gold); text-shadow:0 0 10px #e8c06a90; }
+  ol.laws b{ color:var(--ink); font-weight:600; }
+
+  .status-strip{
+    display:flex; gap:1.2rem; flex-wrap:wrap;
+    margin-top:1.2rem; padding-top:1rem;
+    border-top:1px solid #131f24;
+    font-family:var(--mono); font-size:.7rem; letter-spacing:.1em;
+    color:var(--ink-dim); text-transform:uppercase;
+  }
+  .status-strip b{ color:var(--jade); font-weight:400; }
+
+  /* ============================================================
+     CONTROLES
+     ============================================================ */
+  .console{
+    grid-column:1 / -1;
+    display:flex; flex-direction:column; align-items:center; gap:1.1rem;
+    margin-top:clamp(4px,1.5vw,14px);
+  }
+  .buttons{ display:flex; gap:.9rem; flex-wrap:wrap; justify-content:center; }
+
+  button.rune{
+    font-family:var(--serif);
+    letter-spacing:.24em; text-transform:uppercase;
+    font-size:.78rem; font-weight:600;
+    padding:.95rem 2.1rem;
+    color:var(--jade);
+    background:linear-gradient(180deg,#0f2320,#08160f);
+    border:1px solid #1e5c45;
+    border-radius:2px;
+    cursor:pointer;
+    position:relative;
+    box-shadow:0 0 24px #3ff0a81f, inset 0 1px 0 #ffffff0d;
+    transition:color .25s, box-shadow .3s, transform .12s, border-color .25s, background .3s;
+  }
+  button.rune:hover{
+    color:#d8fff0;
+    border-color:var(--jade);
+    box-shadow:0 0 42px #3ff0a855, inset 0 0 22px #3ff0a81a;
+  }
+  button.rune:active{ transform:translateY(1px); }
+  button.rune:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+  button.rune.ghost{
+    color:var(--ink-dim);
+    border-color:#243138;
+    background:linear-gradient(180deg,#0d1418,#080d10);
+    box-shadow:none;
+    padding:.95rem 1.5rem;
+  }
+  button.rune.ghost:hover{ color:var(--blood); border-color:#5b2a30; box-shadow:0 0 26px #ff5a631f; }
+
+  /* ============================================================
+     LOG
+     ============================================================ */
+  .log{
+    width:100%; max-width:760px;
+    min-height:96px;
+    border:1px solid #16232a;
+    border-radius:3px;
+    background:linear-gradient(180deg,#0a1114cc,#070c0ecc);
+    box-shadow:inset 0 0 40px #00000070;
+    padding:.9rem 1.1rem;
+    display:flex; flex-direction:column; gap:.5rem;
+  }
+  .log-entry{
+    font-family:var(--mono);
+    font-size:.76rem; line-height:1.6;
+    letter-spacing:.02em;
+    color:var(--ink-dim);
+    padding-left:1.1rem;
+    position:relative;
+    animation:fadein .4s ease both;
+  }
+  .log-entry::before{ content:"›"; position:absolute; left:0; opacity:.6; }
+  .log-entry.info::before{ color:var(--arcane); }
+  .log-entry.error{ color:var(--blood); }
+  .log-entry.error::before{ content:"✕"; color:var(--blood); }
+  .log-entry.win{
+    font-family:var(--serif);
+    font-size:.98rem; letter-spacing:.14em;
+    background:linear-gradient(95deg,var(--jade),#d9f7e8 40%,var(--gold));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 30px #3ff0a840;
+    padding-left:1.1rem;
+  }
+  .log-entry.win::before{ content:"✦"; color:var(--gold); -webkit-text-fill-color:var(--gold); text-shadow:0 0 14px var(--gold); }
+  @keyframes fadein{ from{ opacity:0; transform:translateY(-4px) } }
+
+  footer{
+    margin-top:2.4rem; font-size:.66rem; letter-spacing:.3em; text-transform:uppercase;
+    color:#33454b; z-index:1;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition-duration:.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>O Coração de Jade</h1>
+  <p class="sub">Enigma do Fluxo Arcano</p>
+  <div class="rule-divider"></div>
+</header>
+
+<main id="app">
+
+  <!-- ================= ALTAR ================= -->
+  <div class="altar" id="altar">
+    <svg class="web" id="web" viewBox="0 0 600 600" aria-hidden="true">
+      <defs>
+        <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- guias de pedra -->
+      <polygon class="guide" id="guideHex" points=""/>
+      <g class="guide" id="guideSpokes"></g>
+      <!-- arestas desenhadas dinamicamente -->
+      <g id="edges"></g>
+    </svg>
+    <!-- nós injetados via JS -->
+  </div>
+
+  <!-- ================= GRIMÓRIO ================= -->
+  <aside class="grimoire">
+    <h2>Leis do Círculo</h2>
+    <p class="hint">Gravadas na pedra por mãos há muito desfeitas.</p>
+    <ol class="laws" id="laws">
+      <li data-law="1">O <b>Sol</b> jamais tocará a <b>Floresta</b> — nenhum fluxo entre eles, em direção alguma.</li>
+      <li data-law="2">O <b>Coração de Jade</b> recebe <b>exatamente 3</b> fluxos e não devolve <b>nenhum</b>.</li>
+      <li data-law="3">O <b>Rio</b> só corre para a <b>Montanha</b> ou para o <b>Coração</b> — no máximo <b>2</b> saídas.</li>
+      <li data-law="4">A <b>Estrela</b> deve verter, obrigatoriamente, para a <b>Lua</b>.</li>
+    </ol>
+    <div class="status-strip">
+      <span>Vínculos: <b id="statEdges">0</b></span>
+      <span>Origem: <b id="statSel">—</b></span>
+      <span>Coração: <b id="statCore">0 ← / 0 →</b></span>
+    </div>
+  </aside>
+
+  <!-- ================= CONSOLE ================= -->
+  <div class="console">
+    <div class="buttons">
+      <button class="rune" id="btnActivate">Ativar Fluxo Arcano</button>
+      <button class="rune ghost" id="btnReset">Dissipar Vínculos</button>
+    </div>
+    <div class="log" id="log" role="log" aria-live="polite"></div>
+  </div>
+
+</main>
+
+<footer>Clique numa runa, depois noutra, para tecer o fluxo · Clique na linha para rompê-la</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ==========================================================
+     DADOS DO GRAFO
+     ========================================================== */
+  const R = 48;                       // raio do nó (unidades do viewBox 600x600)
+  const CX = 300, CY = 300;
+
+  const NODES = [
+    { id:'sol',      name:'Sol',      icon:'☀︎', x:300,   y:90,  hue:'gold'   },
+    { id:'estrela',  name:'Estrela',  icon:'✦',       x:481.9, y:195, hue:'gold'   },
+    { id:'lua',      name:'Lua',      icon:'☾',       x:481.9, y:405, hue:'arcane' },
+    { id:'floresta', name:'Floresta', icon:'❦',       x:300,   y:510, hue:'jade'   },
+    { id:'montanha', name:'Montanha', icon:'▲',       x:118.1, y:405, hue:'arcane' },
+    { id:'rio',      name:'Rio',      icon:'≋',       x:118.1, y:195, hue:'arcane' },
+    { id:'jade',     name:'Coração de Jade', icon:'❖', x:CX,   y:CY,  hue:'jade', core:true }
+  ];
+
+  const byId = Object.fromEntries(NODES.map(n => [n.id, n]));
+  const nameOf = id => byId[id].name;
+
+  // Topologia exata da solução
+  const SOLUTION = [
+    ['sol','estrela'], ['sol','rio'],
+    ['rio','montanha'], ['rio','jade'],
+    ['estrela','lua'], ['lua','jade'],
+    ['montanha','jade']
+  ].map(([a,b]) => a + '>' + b);
+
+  /* ==========================================================
+     ESTADO
+     ========================================================== */
+  let edges = [];        // [{from,to}]
+  let selected = null;   // id do nó de origem
+  let solved = false;
+
+  const key = (f,t) => f + '>' + t;
+  const has = (f,t) => edges.some(e => e.from === f && e.to === t);
+  const outOf = id => edges.filter(e => e.from === id);
+  const intoOf = id => edges.filter(e => e.to === id);
+
+  /* ==========================================================
+     ELEMENTOS
+     ========================================================== */
+  const app       = document.getElementById('app');
+  const altar     = document.getElementById('altar');
+  const edgeLayer = document.getElementById('edges');
+  const logBox    = document.getElementById('log');
+  const laws      = document.getElementById('laws');
+  const statEdges = document.getElementById('statEdges');
+  const statSel   = document.getElementById('statSel');
+  const statCore  = document.getElementById('statCore');
+  const SVGNS     = 'http://www.w3.org/2000/svg';
+
+  /* ==========================================================
+     CONSTRUÇÃO DO ALTAR
+     ========================================================== */
+  function buildGuides(){
+    const outer = NODES.filter(n => !n.core);
+    document.getElementById('guideHex')
+      .setAttribute('points', outer.map(n => `${n.x},${n.y}`).join(' '));
+
+    const spokes = document.getElementById('guideSpokes');
+    outer.forEach(n => {
+      const l = document.createElementNS(SVGNS,'line');
+      l.setAttribute('x1', CX); l.setAttribute('y1', CY);
+      l.setAttribute('x2', n.x); l.setAttribute('y2', n.y);
+      spokes.appendChild(l);
+    });
+  }
+
+  function buildNodes(){
+    NODES.forEach(n => {
+      const b = document.createElement('button');
+      b.className = 'node' + (n.core ? ' core' : '');
+      b.dataset.id = n.id;
+      b.dataset.hue = n.hue;
+      b.type = 'button';
+      b.style.left = (n.x / 600 * 100) + '%';
+      b.style.top  = (n.y / 600 * 100) + '%';
+      b.setAttribute('aria-label', n.name);
+      b.innerHTML = `<span class="icon" aria-hidden="true">${n.icon}</span><span class="name">${n.name}</span>`;
+      b.addEventListener('click', () => onNodeClick(n.id));
+      altar.appendChild(b);
+    });
+  }
+
+  /* ==========================================================
+     DESENHO DAS CONEXÕES
+     ========================================================== */
+  function renderEdges(){
+    edgeLayer.textContent = '';
+
+    edges.forEach(e => {
+      const a = byId[e.from], b = byId[e.to];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const ux = dx / len, uy = dy / len;
+
+      // desloca lateralmente quando existe o fluxo inverso
+      let ox = 0, oy = 0;
+      if (has(e.to, e.from)) { ox = -uy * 15; oy = ux * 15; }
+
+      const x1 = a.x + ux * (R + 5) + ox,  y1 = a.y + uy * (R + 5) + oy;
+      const x2 = b.x - ux * (R + 20) + ox, y2 = b.y - uy * (R + 20) + oy;
+
+      const g = document.createElementNS(SVGNS,'g');
+      g.setAttribute('class','edge');
+
+      const mk = (cls, w) => {
+        const l = document.createElementNS(SVGNS,'line');
+        l.setAttribute('class', cls);
+        l.setAttribute('x1',x1); l.setAttribute('y1',y1);
+        l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+        if (w) l.setAttribute('stroke-width', w);
+        return l;
+      };
+
+      g.appendChild(mk('edge-glow'));
+      g.appendChild(mk('edge-line'));
+
+      // ponta de seta (triângulo próprio, para controlar cor/brilho)
+      const tipX = b.x - ux * (R + 3) + ox, tipY = b.y - uy * (R + 3) + oy;
+      const w = 9, back = 20;
+      const bx = tipX - ux * back, by = tipY - uy * back;
+      const head = document.createElementNS(SVGNS,'polygon');
+      head.setAttribute('class','arrowhead');
+      head.setAttribute('points',
+        `${tipX},${tipY} ${bx - uy*w},${by + ux*w} ${bx + uy*w},${by - ux*w}`);
+      head.setAttribute('filter','url(#soft-glow)');
+      g.appendChild(head);
+
+      // área invisível de clique (romper vínculo)
+      const hit = mk('edge-hit');
+      hit.addEventListener('click', ev => { ev.stopPropagation(); removeEdge(e.from, e.to); });
+      g.appendChild(hit);
+
+      const t = document.createElementNS(SVGNS,'title');
+      t.textContent = `${nameOf(e.from)} → ${nameOf(e.to)} (clique para romper)`;
+      g.appendChild(t);
+
+      edgeLayer.appendChild(g);
+    });
+
+    refreshStats();
+  }
+
+  /* ==========================================================
+     INTERAÇÃO
+     ========================================================== */
+  function onNodeClick(id){
+    if (solved) resetBoard(true);
+
+    if (selected === null){
+      selected = id;
+      paintSelection();
+      log(`Runa de origem escolhida: ${nameOf(id)}.`, 'info');
+      return;
+    }
+    if (selected === id){
+      selected = null;
+      paintSelection();
+      log('Origem liberada.', 'info');
+      return;
+    }
+
+    const from = selected, to = id;
+    selected = null;
+    paintSelection();
+
+    if (has(from, to)){
+      removeEdge(from, to);
+    } else {
+      edges.push({ from, to });
+      renderEdges();
+      log(`Fluxo tecido: ${nameOf(from)} → ${nameOf(to)}.`, 'info');
+    }
+  }
+
+  function removeEdge(from, to){
+    edges = edges.filter(e => !(e.from === from && e.to === to));
+    renderEdges();
+    log(`Vínculo rompido: ${nameOf(from)} ⇢ ${nameOf(to)}.`, 'info');
+  }
+
+  function paintSelection(){
+    document.querySelectorAll('.node').forEach(n =>
+      n.classList.toggle('selected', n.dataset.id === selected));
+    statSel.textContent = selected ? nameOf(selected) : '—';
+  }
+
+  function refreshStats(){
+    statEdges.textContent = edges.length;
+    statCore.textContent = `${intoOf('jade').length} ← / ${outOf('jade').length} →`;
+  }
+
+  /* ==========================================================
+     VALIDAÇÃO — AS QUATRO LEIS
+     ========================================================== */
+  function checkLaws(){
+    const broken = [];
+
+    // Lei I — Sol e Floresta jamais se tocam
+    if (has('sol','floresta') || has('floresta','sol'))
+      broken.push(1);
+
+    // Lei II — Coração: exatamente 3 entradas, 0 saídas
+    if (intoOf('jade').length !== 3 || outOf('jade').length !== 0)
+      broken.push(2);
+
+    // Lei III — Rio: saídas só para Montanha ou Coração, máx. 2
+    const rioOut = outOf('rio');
+    if (rioOut.length > 2 || rioOut.some(e => e.to !== 'montanha' && e.to !== 'jade'))
+      broken.push(3);
+
+    // Lei IV — Estrela deve verter para a Lua
+    if (!has('estrela','lua'))
+      broken.push(4);
+
+    return broken;
+  }
+
+  function isExactTopology(){
+    if (edges.length !== SOLUTION.length) return false;
+    const set = new Set(edges.map(e => key(e.from, e.to)));
+    return set.size === SOLUTION.length && SOLUTION.every(k => set.has(k));
+  }
+
+  function markLaws(broken){
+    laws.querySelectorAll('li').forEach(li => {
+      const n = Number(li.dataset.law);
+      li.classList.toggle('broken', broken.includes(n));
+      li.classList.toggle('ok', broken.length > 0 && !broken.includes(n));
+    });
+  }
+
+  function clearLawMarks(){
+    laws.querySelectorAll('li').forEach(li => li.classList.remove('broken','ok'));
+  }
+
+  /* ==========================================================
+     ATIVAÇÃO
+     ========================================================== */
+  function activate(){
+    selected = null;
+    paintSelection();
+
+    if (edges.length === 0){
+      fail('O círculo está mudo. Nenhum vínculo foi tecido.');
+      markLaws([]);
+      return;
+    }
+
+    const broken = checkLaws();
+    markLaws(broken);
+
+    if (broken.length > 0){
+      const roman = ['','I','II','III','IV'];
+      fail(`CURTO-CIRCUITO ARCANO — a energia colidiu contra as Leis ${broken.map(n => roman[n]).join(', ')} e se desfez em cinzas.`);
+      return;
+    }
+
+    if (!isExactTopology()){
+      fail('CURTO-CIRCUITO ARCANO — as Leis foram respeitadas, mas o desenho do fluxo não é o verdadeiro. A pedra permanece fria.');
+      return;
+    }
+
+    win();
+  }
+
+  function fail(msg){
+    solved = false;
+    app.classList.remove('solved');
+    altar.classList.remove('shake');
+    void altar.offsetWidth;           // reinicia a animação
+    altar.classList.add('shake');
+    log(msg, 'error');
+  }
+
+  function win(){
+    solved = true;
+    clearLawMarks();
+    laws.querySelectorAll('li').forEach(li => li.classList.add('ok'));
+    app.classList.add('solved');
+    log('O Coração de Jade foi ativado. A porta se abre!', 'win');
+  }
+
+  /* ==========================================================
+     RESET & LOG
+     ========================================================== */
+  function resetBoard(silent){
+    edges = [];
+    selected = null;
+    solved = false;
+    app.classList.remove('solved');
+    clearLawMarks();
+    renderEdges();
+    paintSelection();
+    if (!silent) log('Os vínculos se dissiparam. O círculo aguarda.', 'info');
+  }
+
+  function log(text, type){
+    const el = document.createElement('div');
+    el.className = 'log-entry ' + (type || 'info');
+    el.textContent = text;
+    logBox.prepend(el);
+    while (logBox.children.length > 7) logBox.lastElementChild.remove();
+  }
+
+  /* ==========================================================
+     INIT
+     ========================================================== */
+  buildGuides();
+  buildNodes();
+  renderEdges();
+  document.getElementById('btnActivate').addEventListener('click', activate);
+  document.getElementById('btnReset').addEventListener('click', () => resetBoard(false));
+  log('O altar desperta. Sete runas aguardam o traçado do fluxo.', 'info');
+
+})();
+</script>
+</body>
+</html>
