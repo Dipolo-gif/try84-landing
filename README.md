@@ -5,19 +5,17 @@ Todo o CSS e o JavaScript estão embutidos, sem build, sem dependências de paco
 
 Abra o `index.html` no navegador ou acesse a versão publicada.
 
-## O que tem dentro (v2, nov/2026)
+## O que tem dentro (v3, nov/2026)
 
-Página de pré-lançamento da marca, em preto e branco, sem produtos à venda:
+Página de pré-lançamento da marca, em preto e branco:
 
-- Abertura "Feita por jogadores." com foto em P&B e o letreiro TRY84
-- Faixa corrida (Forward together · Do treino ao terceiro tempo)
-- Manifesto com o jogador mergulhando para o try (anda conforme a página desce)
-- Três valores do rugby, fotos editoriais e a seção "Coleção 01 · em produção"
+- Abertura com a foto da bola TRY84 no concreto (Est. 2026 · Natal · Brasil)
+- Coleção 01 logo depois da abertura: Jonah Lomu, Street XV, Tryman, Tee 001 e Tee 002,
+  com a cor de cada peça; passando o mouse, a foto aproxima na estampa
+- "O que vem do campo" (3 valores), "A marca" (sobre) e a lista de espera
 - Lista de espera: o e-mail vai para a lista da duavesso (função `subscribe_newsletter`)
 
 Para mostrar o Instagram no rodapé, preencha `CONFIG.instagram` no fim do `index.html`.
-
-As estampas/produtos da versão anterior saíram do site (continuam no histórico do git).
 A função `api/criar-preferencia.js` fica guardada para quando a loja voltar.
 
 ## Versão anterior (loja)
