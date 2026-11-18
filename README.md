@@ -5,6 +5,23 @@ Todo o CSS e o JavaScript estão embutidos, sem build, sem dependências de paco
 
 Abra o `index.html` no navegador ou acesse a versão publicada.
 
+## O que tem dentro (v2, nov/2026)
+
+Página de pré-lançamento da marca, em preto e branco, sem produtos à venda:
+
+- Abertura "Feita por jogadores." com foto em P&B e o letreiro TRY84
+- Faixa corrida (Forward together · Do treino ao terceiro tempo)
+- Manifesto com o jogador mergulhando para o try (anda conforme a página desce)
+- Três valores do rugby, fotos editoriais e a seção "Coleção 01 · em produção"
+- Lista de espera: o e-mail vai para a lista da duavesso (função `subscribe_newsletter`)
+
+Para mostrar o Instagram no rodapé, preencha `CONFIG.instagram` no fim do `index.html`.
+
+As estampas/produtos da versão anterior saíram do site (continuam no histórico do git).
+A função `api/criar-preferencia.js` fica guardada para quando a loja voltar.
+
+## Versão anterior (loja)
+
 ## O que tem dentro
 
 - Hero em tela cheia com parallax em duas camadas (fundo a 0,26× e tipografia a 0,13× do scroll)
