@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
 <style>
 /* TRY84 · preto e branco. Tipografia larga e pesada como o logo, fotos reais em P&B, nada de enfeite. */
-:root{--black:#0b0b0b;--paper:#f2f0eb;--grey:#8b8882;--line:rgba(242,240,235,.16);--line-dark:rgba(11,11,11,.16);--pad:clamp(20px,4.5vw,64px);
+:root{--max:1440px;--black:#0b0b0b;--paper:#f2f0eb;--grey:#8b8882;--line:rgba(242,240,235,.16);--line-dark:rgba(11,11,11,.16);--pad:clamp(20px,4.5vw,64px);--gut:max(var(--pad),calc((100vw - var(--max))/2));
  --wide:'Archivo',Arial Black,sans-serif}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -34,14 +34,14 @@ body:after{content:'';position:fixed;inset:-50%;z-index:100;pointer-events:none;
 @keyframes grain{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-4%)}75%{transform:translate(-2%,3%)}}
 
 /* Topo */
-.top{position:fixed;inset:0 0 auto;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:18px var(--pad);mix-blend-mode:difference;color:#fff}
+.top{position:fixed;inset:0 0 auto;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:18px var(--gut);mix-blend-mode:difference;color:#fff}
 .top img{height:30px;width:auto}
 .top nav{display:flex;gap:clamp(16px,3vw,40px);font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
 .top nav a{position:relative}.top nav a:after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:2px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .35s cubic-bezier(.7,0,.2,1)}
 .top nav a:hover:after{transform:none;transform-origin:left}
 
 /* Abertura */
-.hero{position:relative;min-height:100svh;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:1fr auto;gap:0 var(--pad);padding:110px var(--pad) 0}
+.hero{position:relative;min-height:min(100svh,980px);display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:1fr auto;gap:0 var(--pad);padding:110px var(--gut) 0}
 .hero-copy{grid-column:1/8;align-self:center;display:grid;gap:30px;padding-bottom:40px}
 .hero h1{font-size:clamp(44px,7vw,124px)}
 .hero h1 span{display:block;overflow:hidden}.hero h1 span i{display:block;font-style:normal;animation:up 1s cubic-bezier(.2,.8,.1,1) both}
@@ -54,7 +54,7 @@ body:after{content:'';position:fixed;inset:-50%;z-index:100;pointer-events:none;
 .btn:hover{gap:22px}.btn svg{width:18px;height:18px}
 .link{font-size:14px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border-bottom:2px solid var(--line);padding-bottom:4px;transition:border-color .2s}.link:hover{border-color:var(--paper)}
 .hero-photo{grid-column:8/13;align-self:center;position:relative;z-index:2;padding-bottom:30px}
-.hero-photo img{width:100%;aspect-ratio:4/5;object-fit:cover;filter:contrast(1.05);animation:reveal 1.3s .2s cubic-bezier(.2,.8,.1,1) both}
+.hero-photo img{width:100%;max-height:72vh;aspect-ratio:4/5;object-fit:cover;filter:contrast(1.05);animation:reveal 1.3s .2s cubic-bezier(.2,.8,.1,1) both}
 @keyframes reveal{from{clip-path:inset(100% 0 0 0)}}
 .hero-photo figcaption{display:flex;justify-content:space-between;margin-top:12px;color:var(--grey)}
 .hero-word{grid-column:1/-1;grid-row:2;padding:30px 0 22px;border-top:1px solid var(--line)}
@@ -63,28 +63,34 @@ body:after{content:'';position:fixed;inset:-50%;z-index:100;pointer-events:none;
 /* Faixa */
 .band{overflow:hidden;background:var(--paper);color:var(--black);border-block:1px solid var(--black)}
 .band-track{display:flex;width:max-content;animation:tick 26s linear infinite}
-.band span{display:flex;align-items:center;gap:34px;padding:20px 17px;font-size:clamp(22px,2.6vw,36px);white-space:nowrap}
+.band span{display:flex;align-items:center;gap:34px;padding:20px 17px;font-size:clamp(22px,2.6vw,38px);white-space:nowrap}
 .band span img{height:.8em;width:auto}
 @keyframes tick{to{transform:translateX(-50%)}}
 
 /* Manifesto (fundo claro) */
-.manifesto{position:relative;background:var(--paper);color:var(--black);padding:clamp(90px,12vw,170px) var(--pad);overflow:hidden}
+.manifesto{position:relative;background:var(--paper);color:var(--black);padding:clamp(90px,12vw,170px) var(--gut);overflow:hidden}
 .manifesto .label{color:#5d5a55}
 .manifesto-text{max-width:1180px;margin-top:28px;font-size:clamp(28px,3.9vw,58px);line-height:1.08;font-weight:600;letter-spacing:-.02em}
 .manifesto-text em{font-style:normal;color:#9a968f}
 .dive{width:min(760px,74vw);margin:clamp(50px,7vw,90px) 0 0 auto;will-change:transform}
 .manifesto-foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:40px;padding-top:22px;border-top:1px solid var(--line-dark);color:#5d5a55}
 
-/* Valores */
-.values{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
-.values li{padding:clamp(40px,5vw,70px) var(--pad) clamp(46px,6vw,80px);border-right:1px solid var(--line)}
-.values li:last-child{border-right:0}
-.values .num{color:var(--grey)}
-.values h3{margin:60px 0 18px;font-size:clamp(26px,2.6vw,40px)}
-.values p{color:#bdbab4;max-width:340px}
+/* Valores: como uma súmula de jogo, uma linha por valor */
+.values{padding:clamp(70px,9vw,130px) var(--gut) clamp(40px,5vw,70px)}
+.values-head{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;padding-bottom:22px;color:var(--grey)}
+.values-head h2{font-size:clamp(34px,4.2vw,64px);color:var(--paper)}
+.values ol{border-top:2px solid var(--paper)}
+.values li{position:relative;display:grid;grid-template-columns:minmax(120px,.7fr) 1.4fr 1fr;align-items:center;gap:var(--pad);padding:clamp(26px,3vw,42px) 0;border-bottom:1px solid var(--line);isolation:isolate;transition:color .35s}
+.values li:before{content:'';position:absolute;inset:0 calc(var(--gut)*-1);z-index:-1;background:var(--paper);transform:scaleY(0);transform-origin:bottom;transition:transform .45s cubic-bezier(.7,0,.2,1)}
+.values li:hover{color:var(--black)}.values li:hover:before{transform:none}
+.values .big{font-size:clamp(70px,9vw,140px);color:transparent;-webkit-text-stroke:1.5px var(--paper);line-height:.8;transition:color .35s}
+.values li:hover .big{color:var(--black);-webkit-text-stroke-color:var(--black)}
+.values h3{font-size:clamp(26px,3vw,46px)}
+.values h3 small{display:block;margin-bottom:12px;font:600 12px/1 'Archivo',sans-serif;letter-spacing:.18em;color:var(--grey);font-stretch:100%}
+.values p{color:#bdbab4;max-width:360px;transition:color .35s}.values li:hover p{color:#3d3b37}
 
 /* Fotos */
-.photos{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:clamp(10px,1.4vw,20px);padding:clamp(70px,9vw,130px) var(--pad)}
+.photos{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:clamp(10px,1.4vw,20px);padding:clamp(70px,9vw,130px) var(--gut)}
 .photos figure{overflow:hidden}
 .photos figure:nth-child(2){margin-top:90px}.photos figure:nth-child(3){margin-top:30px}
 .photos img{width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.8,.1,1)}
@@ -93,7 +99,7 @@ body:after{content:'';position:fixed;inset:-50%;z-index:100;pointer-events:none;
 .photos figcaption{display:flex;justify-content:space-between;padding-top:12px;color:var(--grey)}
 
 /* Coleção 01 */
-.drop{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--pad);padding:clamp(80px,10vw,150px) var(--pad);border-top:1px solid var(--line)}
+.drop{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--pad);padding:clamp(80px,10vw,150px) var(--gut);border-top:1px solid var(--line)}
 .drop-title{grid-column:1/8}
 .drop-title h2{font-size:clamp(60px,10vw,170px)}
 .drop-title h2 .out{color:transparent;-webkit-text-stroke:2px var(--paper)}
@@ -112,7 +118,7 @@ form{display:grid;gap:12px}
 .form-out{min-height:1.4em;font-size:15px;color:#c9c6c0}.form-out.err{color:#ff8f86}
 
 /* Rodapé */
-footer{padding:clamp(60px,8vw,110px) var(--pad) 26px;border-top:1px solid var(--line)}
+footer{padding:clamp(60px,8vw,110px) var(--gut) 26px;border-top:1px solid var(--line)}
 .foot-mark{width:min(560px,70vw)}
 .foot-row{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-top:60px;color:var(--grey)}
 .foot-row nav{display:flex;gap:26px;flex-wrap:wrap}.foot-row nav a:hover{color:var(--paper)}
@@ -122,7 +128,7 @@ footer{padding:clamp(60px,8vw,110px) var(--pad) 26px;border-top:1px solid var(--
 
 @media(max-width:900px){
  .hero{grid-template-columns:1fr;padding-top:96px}.hero-word{grid-row:auto}.hero-copy,.hero-photo{grid-column:1}.hero-photo{margin:10px 0 40px;max-width:520px}
- .values{grid-template-columns:1fr}.values li{border-right:0;border-bottom:1px solid var(--line)}.values h3{margin-top:30px}
+ .values li{grid-template-columns:1fr;gap:14px}.values .big{font-size:64px}
  .photos{grid-template-columns:1fr 1fr}.photos figure:first-child{grid-column:1/-1}.photos figure:first-child img{aspect-ratio:3/2}.photos figure:nth-child(2){margin-top:0}.photos figure:nth-child(3){margin-top:40px}
  .drop-title,.drop-body{grid-column:1/-1}
 }
@@ -159,23 +165,27 @@ footer{padding:clamp(60px,8vw,110px) var(--pad) 26px;border-top:1px solid var(--
     <span class="wide">Forward together <img src="assets/t84-preto.png" alt=""></span><span class="wide">Do treino ao terceiro tempo <img src="assets/t84-preto.png" alt=""></span><span class="wide">Feita por jogadores <img src="assets/t84-preto.png" alt=""></span>
   </div></div>
 
-  <section class="manifesto" id="manifesto" aria-labelledby="man-titulo">
-    <h2 class="label" id="man-titulo">Manifesto</h2>
-    <p class="manifesto-text r">Try é o momento em que a bola encosta no chão do outro lado. <em>Ninguém chega lá sozinho:</em> antes dele vêm o passe para trás, o tackle que dói, o ruck, o companheiro que segura a linha. A TRY84 nasceu dentro de campo, para vestir esse jeito de jogar <em>também fora dele.</em></p>
-    <img class="dive" id="dive" src="assets/mergulho-preto.png" alt="Silhueta de um jogador mergulhando para marcar um try" width="1000" height="518" loading="lazy">
-    <div class="manifesto-foot label"><span>Rugby lifestyle</span><span>Preto e branco</span><span>Forward together</span></div>
-  </section>
 
-  <ol class="values" aria-label="O que a TRY84 leva do campo">
-    <li class="r"><span class="num label">01 · Solidariedade</span><h3 class="wide">Ninguém marca sozinho.</h3><p>Todo try começa com alguém que se jogou no chão para a bola continuar viva.</p></li>
-    <li class="r"><span class="num label">02 · Respeito</span><h3 class="wide">O juiz não se discute.</h3><p>Dentro de campo o contato é duro. A conversa com quem apita, nunca.</p></li>
-    <li class="r"><span class="num label">03 · Terceiro tempo</span><h3 class="wide">Depois do apito, mesa junta.</h3><p>Adversário em campo, amigo depois. É por isso que o rugby é diferente.</p></li>
-  </ol>
+  <section class="values" aria-labelledby="val-titulo">
+    <div class="values-head r"><h2 class="wide" id="val-titulo">O que vem do campo</h2><span class="label">3 regras · sem exceção</span></div>
+    <ol>
+      <li class="r"><span class="big wide" aria-hidden="true">01</span><h3 class="wide"><small>Solidariedade</small>Ninguém marca sozinho.</h3><p>Todo try começa com alguém que se jogou no chão para a bola continuar viva.</p></li>
+      <li class="r"><span class="big wide" aria-hidden="true">02</span><h3 class="wide"><small>Respeito</small>O juiz não se discute.</h3><p>Dentro de campo o contato é duro. A conversa com quem apita, nunca.</p></li>
+      <li class="r"><span class="big wide" aria-hidden="true">03</span><h3 class="wide"><small>Terceiro tempo</small>Depois do apito, mesa junta.</h3><p>Adversário em campo, amigo depois. É por isso que o rugby é diferente.</p></li>
+    </ol>
+  </section>
 
   <section class="photos" aria-label="Fotos">
     <figure class="r"><img src="assets/foto-campo.webp" alt="Bola de rugby na grama diante do H do gol" width="1600" height="1067" loading="lazy"><figcaption class="label"><span>Fig. 02</span><span>O campo</span></figcaption></figure>
     <figure class="r"><img src="assets/foto-contato.webp" alt="Jogador com a bola sendo segurado pela camisa" width="600" height="750" loading="lazy"><figcaption class="label"><span>Fig. 03</span><span>O tackle</span></figcaption></figure>
     <figure class="r"><img src="assets/foto-posts.webp" alt="Time treinando entre os postes de um campo antigo" width="600" height="750" loading="lazy"><figcaption class="label"><span>Fig. 04</span><span>O treino</span></figcaption></figure>
+  </section>
+
+  <section class="manifesto" id="manifesto" aria-labelledby="man-titulo">
+    <h2 class="label" id="man-titulo">Manifesto</h2>
+    <p class="manifesto-text r">Try é o momento em que a bola encosta no chão do outro lado. <em>Ninguém chega lá sozinho:</em> antes dele vêm o passe para trás, o tackle que dói, o ruck, o companheiro que segura a linha. A TRY84 nasceu dentro de campo, para vestir esse jeito de jogar <em>também fora dele.</em></p>
+    <img class="dive" id="dive" src="assets/mergulho-preto.png" alt="Silhueta de um jogador mergulhando para marcar um try" width="1000" height="518" loading="lazy">
+    <div class="manifesto-foot label"><span>Rugby lifestyle</span><span>Preto e branco</span><span>Forward together</span></div>
   </section>
 
   <section class="drop" id="colecao" aria-labelledby="drop-titulo">
